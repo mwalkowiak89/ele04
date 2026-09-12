@@ -112,7 +112,7 @@
   ul.tight li{margin:3px 0}
   .hidden{display:none!important}
   footer{color:var(--muted);font-size:.88rem;text-align:center;margin-top:30px}
-  @media print{nav.topnav,.tools{display:none}details.sol{open:true}section.card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}}
+  @media print{@page{size:A4;margin:12mm}nav.topnav,.tools,#tip{display:none!important}body{background:#fff;font-size:13px}.wrap{padding:0;max-width:none}section.card{box-shadow:none;border:1px solid #ccc;margin:10px 0;padding:14px 16px}header.hero{break-after:avoid}.step,.box,.tablewrap,.flow,.formula,.gitem,.sitem{break-inside:avoid}.card h2{break-after:avoid;display:block;line-height:1.5}.card h2 .num{display:inline-flex;width:30px;height:30px;vertical-align:middle;margin-right:6px}details.sol>summary::before{display:none}.term{color:inherit;border-bottom:none;font-weight:600}.term::after{display:none}.chart{max-height:150mm}.formula{white-space:normal;overflow:visible;line-height:1.9}}
 </style>
 </head>
 <body>
@@ -364,7 +364,7 @@
     <div class="tablewrap">
     <table>
       <tr><th>Okres letni</th><th>Okres zimowy</th></tr>
-      <tr><td class="res">η<sub>t</sub> = (24−33)/(21−33) · 100 % = 75 %</td><td class="res">η<sub>t</sub> = (17+14)/(22+14) · 100 % ≈ 86,1 %</td></tr>
+      <tr><td class="res">η<sub>t</sub> = <span class="frac"><span>24 − 33</span><span>21 − 33</span></span> · 100 % = <span class="frac"><span>−9</span><span>−12</span></span> · 100 % = 75 %</td><td class="res">η<sub>t</sub> = <span class="frac"><span>17 − (−14)</span><span>22 − (−14)</span></span> · 100 % = <span class="frac"><span>31</span><span>36</span></span> · 100 % ≈ 86,1 %</td></tr>
     </table>
     </div>
     <p class="theory" style="margin:8px 0 0">Wartości 75–86 % to typowy zakres dla wymienników obrotowych – kolejne potwierdzenie, że temperatury z tabeli 1 są poprawne.</p>
