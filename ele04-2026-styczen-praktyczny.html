@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELE.04 – styczeń 2026 – część praktyczna – rozwiązanie krok po kroku</title>
+<style>
+  :root{
+    --bg:#f3f5f7; --card:#ffffff; --ink:#1f2933; --muted:#5b6b7a; --line:#dfe5ea;
+    --accent:#0f766e; --accent-soft:#e6f4f2; --accent-ink:#0b5c56;
+    --ok:#15803d; --ok-soft:#e8f6ec; --warn:#b45309; --warn-soft:#fdf3e3;
+    --info:#1d4ed8; --info-soft:#e8eefc; --term:#0e5f8a;
+    --radius:16px; --shadow:0 2px 10px rgba(20,30,40,.06);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+  @media (min-width:700px){body{font-size:17px}}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 16px 80px}
+
+  header.hero{background:linear-gradient(135deg,#0f766e,#155e75);color:#fff;border-radius:var(--radius);padding:22px 20px;box-shadow:var(--shadow)}
+  header.hero h1{margin:0 0 6px;font-size:1.45rem;line-height:1.3}
+  header.hero p{margin:4px 0;opacity:.95}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 12px;font-size:.9rem}
+
+  nav.topnav{position:sticky;top:0;z-index:50;background:rgba(243,245,247,.94);backdrop-filter:blur(6px);padding:10px 0;margin:12px 0 6px;border-bottom:1px solid var(--line)}
+  .navrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .navrow .lbl{font-size:.85rem;color:var(--muted);margin-right:4px}
+  .navbtn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:6px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--accent-ink);font-weight:600;text-decoration:none;font-size:.95rem}
+  .navbtn:hover{background:var(--accent-soft)}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .tbtn{min-height:44px;padding:8px 14px;border-radius:12px;border:1px solid var(--accent);background:#fff;color:var(--accent-ink);font-weight:600;cursor:pointer;font-size:.95rem}
+  .tbtn.active{background:var(--accent);color:#fff}
+
+  section.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 18px;margin:18px 0;scroll-margin-top:130px}
+  @media (min-width:700px){section.card{padding:26px 28px}}
+  .card h2{margin:0 0 4px;font-size:1.3rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--accent);color:#fff;font-size:1rem;flex:0 0 auto}
+  .sub{color:var(--muted);margin:0 0 12px;font-size:.95rem}
+  .tag{display:inline-block;font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--info-soft);color:var(--info);font-weight:600;vertical-align:middle}
+  .tag.calc{background:var(--warn-soft);color:var(--warn)}
+  .tag.chart{background:#f1e8fb;color:#6d28d9}
+
+  details.sol{border:1px solid var(--line);border-radius:12px;margin-top:12px;background:#fbfcfd}
+  details.sol>summary{cursor:pointer;padding:12px 14px;font-weight:700;color:var(--accent-ink);list-style:none;display:flex;align-items:center;gap:8px;min-height:44px}
+  details.sol>summary::-webkit-details-marker{display:none}
+  details.sol>summary::before{content:"▸";transition:transform .2s;display:inline-block}
+  details.sol[open]>summary::before{transform:rotate(90deg)}
+  details.sol>.body{padding:4px 14px 16px}
+
+  .step{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:10px 14px;margin:12px 0}
+  .step b.t{display:block;color:var(--accent-ink);margin-bottom:4px}
+  .box{border-radius:12px;padding:12px 14px;margin:12px 0;border:1px solid var(--line)}
+  .box.data{background:var(--info-soft);border-color:#c7d5f7}
+  .box.result{background:var(--ok-soft);border-color:#bfe3c9}
+  .box.warn{background:var(--warn-soft);border-color:#f3d9a8}
+  .box h4{margin:0 0 6px;font-size:1rem}
+  .ok{color:var(--ok);font-weight:700}
+  .badge-ok{display:inline-flex;align-items:center;gap:6px;background:var(--ok);color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:.9rem}
+  .badge-no{display:inline-flex;align-items:center;gap:6px;background:#b91c1c;color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:.9rem}
+
+  .formula{font-family:"Cambria","Times New Roman",Georgia,serif;font-size:1.15rem;background:#fff;border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;overflow-x:auto;white-space:nowrap}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px}
+  .frac>span{padding:0 6px}
+  .frac>span:first-child{border-bottom:1.5px solid var(--ink)}
+  .dot{font-style:normal}
+  .vdot{position:relative}
+  .vdot::before{content:"·";position:absolute;top:-.75em;left:50%;transform:translateX(-50%);font-weight:700}
+
+  .tablewrap{overflow-x:auto;margin:10px 0}
+  table{border-collapse:collapse;width:100%;min-width:320px;font-size:.95rem}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
+  th{background:#eef2f5}
+  td.l,th.l{text-align:left}
+  td.res{background:var(--ok-soft);font-weight:700;color:var(--ok)}
+  caption{caption-side:top;text-align:left;font-weight:700;padding:6px 0;color:var(--accent-ink)}
+
+  .flow{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch;margin:10px 0}
+  .fbox{flex:1 1 120px;min-width:110px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;text-align:center;font-size:.9rem}
+  .fbox small{display:block;color:var(--muted);font-size:.8rem}
+  .fbox.dev{background:#fff7ed;border-color:#f7c99a}
+  .fbox.rot{background:#fef9c3;border-color:#f2e06a}
+  .fbox.t{background:var(--ok-soft);border-color:#bfe3c9;font-weight:700}
+  .arrow{align-self:center;color:var(--muted);font-size:1.2rem;padding:0 2px}
+  .flowtitle{font-weight:700;margin:14px 0 4px}
+
+  .term{color:var(--term);border-bottom:2px dotted var(--term);cursor:help;text-decoration:none;font-weight:600;padding-bottom:1px;-webkit-tap-highlight-color:transparent}
+  .term::after{content:"?";display:inline-block;font-size:.65em;vertical-align:super;margin-left:2px;color:var(--term);opacity:.75}
+  .term.open{background:#e3f1f9;border-radius:4px}
+  #tip{position:absolute;z-index:1000;max-width:min(340px,calc(100vw - 32px));background:#1f2933;color:#fff;border-radius:12px;padding:12px 14px;font-size:.92rem;line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.25);display:none}
+  #tip b{color:#9fe3d8;display:block;margin-bottom:4px}
+  #tip .arr{position:absolute;width:12px;height:12px;background:#1f2933;transform:rotate(45deg)}
+  #tip.below .arr{top:-6px}
+  #tip.above .arr{bottom:-6px}
+
+  .glossary{display:grid;grid-template-columns:1fr;gap:10px}
+  @media (min-width:700px){.glossary{grid-template-columns:1fr 1fr}}
+  .gitem{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbfcfd}
+  .gitem b{color:var(--term)}
+
+  .summary-grid{display:grid;grid-template-columns:1fr;gap:10px}
+  @media (min-width:600px){.summary-grid{grid-template-columns:1fr 1fr}}
+  .sitem{border-radius:12px;padding:12px 14px;background:var(--ok-soft);border:1px solid #bfe3c9}
+  .sitem b{display:block;color:var(--ok)}
+
+  .chart{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:12px}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.9rem;margin-top:6px}
+  .legend span::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;background:var(--c)}
+
+  ul.tight{margin:6px 0;padding-left:20px}
+  ul.tight li{margin:3px 0}
+  .hidden{display:none!important}
+  footer{color:var(--muted);font-size:.88rem;text-align:center;margin-top:30px}
+  @media print{nav.topnav,.tools{display:none}details.sol{open:true}section.card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>ELE.04 – Egzamin zawodowy, część praktyczna – styczeń 2026</h1>
+  <p><b>Kwalifikacja:</b> Eksploatacja i organizacja robót związanych z montażem instalacji i urządzeń chłodniczych, klimatyzacyjnych oraz pomp ciepła</p>
+  <p><b>Arkusz:</b> ELE.04-01-26.01-SG · zadanie 01 · czas: 180 min · podstawa programowa 2019</p>
+  <div class="chips">
+    <span class="chip">📋 5 ocenianych rezultatów</span>
+    <span class="chip">🧮 obliczenia krok po kroku</span>
+    <span class="chip">📈 wykres Molliera</span>
+    <span class="chip">💡 pojęcia – najedź / stuknij</span>
+  </div>
+</header>
+
+<nav class="topnav" aria-label="Nawigacja">
+  <div class="navrow">
+    <span class="lbl">Skocz do:</span>
+    <a class="navbtn" href="#z0">Treść</a>
+    <a class="navbtn" href="#z1">1</a>
+    <a class="navbtn" href="#z2">2</a>
+    <a class="navbtn" href="#z3">3</a>
+    <a class="navbtn" href="#z4">4</a>
+    <a class="navbtn" href="#z5">5</a>
+    <a class="navbtn" href="#wyniki">Wyniki</a>
+    <a class="navbtn" href="#slownik">Słowniczek</a>
+  </div>
+  <div class="tools">
+    <button class="tbtn" id="btnExpand" type="button">Rozwiń wszystkie rozwiązania</button>
+    <button class="tbtn" id="btnCollapse" type="button">Zwiń wszystkie</button>
+    <button class="tbtn" id="btnCalcOnly" type="button" aria-pressed="false">Pokaż tylko zadania obliczeniowe</button>
+  </div>
+</nav>
+
+<!-- ===================== TREŚĆ ZADANIA ===================== -->
+<section class="card theory" id="z0">
+  <h2><span class="num">0</span> Treść zadania i dane wyjściowe <span class="tag">opis</span></h2>
+  <p class="sub">Streszczenie arkusza – wszystko, co potrzebne do dalszych obliczeń.</p>
+
+  <p>W obiekcie zainstalowano <span class="term" data-def="Urządzenie wentylacyjno-klimatyzacyjne, które w jednej obudowie łączy sekcje: filtry, wentylatory, wymiennik odzysku ciepła, nagrzewnicę, chłodnicę, ewentualnie nawilżacz (komorę zraszania). Przygotowuje powietrze nawiewane do pomieszczeń.">centralę klimatyzacyjną</span> o wydatku strumienia powietrza wentylacyjnego <b>V̇ = 7200 m³/h</b>. Jedną z sekcji jest <span class="term" data-def="Pompa ciepła z zaworem czterodrogowym, która może odwracać kierunek obiegu czynnika. Dzięki temu ten sam wymiennik raz pracuje jako parownik (chłodzi), a raz jako skraplacz (grzeje).">rewersyjna pompa ciepła</span>, a centrala ma także <span class="term" data-def="Regeneracyjny wymiennik odzysku ciepła: obracający się bęben z wypełnieniem, który przejmuje ciepło z powietrza usuwanego i oddaje je powietrzu nawiewanemu (zimą) – lub odwrotnie (latem). Sprawność temperaturowa zwykle 70–85%.">obrotowy wymiennik odzysku ciepła</span>.</p>
+
+  <div class="box data">
+    <h4>🌞 Okres letni (rys. 1) – wskazówki dotyczące zmian temperatury</h4>
+    <ul class="tight">
+      <li>powietrze zewnętrzne <b>32 °C</b>; w <span class="term" data-def="Element, przez który powietrze zewnętrzne jest zasysane do centrali (krata, wieża, czerpnia ścienna). Wentylator i tarcie mogą lekko podnieść temperaturę powietrza.">czerpni</span> podgrzewa się o <b>1 K</b>,</li>
+      <li>powietrze usuwane za wymiennikiem obrotowym ma temperaturę <b>niższą o 9 K</b> od temperatury na wylocie z <span class="term" data-def="Element, przez który powietrze zużyte jest wyrzucane z budynku do otoczenia.">wyrzutni</span> (<b>40 °C</b>),</li>
+      <li>powietrze nawiewane schładza się na <span class="term" data-def="Wymiennik pompy ciepła, w którym czynnik chłodniczy wrze (odparowuje), pobierając ciepło z otoczenia – tutaj z powietrza nawiewanego, które dzięki temu się ochładza. Latem pełni funkcję chłodnicy.">parowniku pompy ciepła</span> o <b>7 K</b> (nawiew <b>17 °C</b>),</li>
+      <li>powietrze usuwane z pomieszczenia (<b>20 °C</b>) podgrzewa się w przewodach przed wymiennikiem obrotowym o <b>1 K</b>,</li>
+      <li><span class="term" data-def="Sekcja nawilżania adiabatycznego: powietrze przepływa przez rozpyloną wodę; nawilża się i jednocześnie ochładza. W tym zadaniu latem jest WYŁĄCZONA, zimą – załączona (ale pomiar temperatury robimy przed nią).">komora zraszania</span> – <b>wyłączona</b>.</li>
+    </ul>
+  </div>
+
+  <div class="box data">
+    <h4>❄️ Okres zimowy (rys. 2) – wskazówki dotyczące zmian temperatury</h4>
+    <ul class="tight">
+      <li>powietrze zewnętrzne <b>−16 °C</b>; w czerpni podgrzewa się o <b>2 K</b>,</li>
+      <li>powietrze usuwane za wymiennikiem obrotowym ma temperaturę <b>wyższą o 5 K</b> od temperatury na wylocie z wyrzutni (<b>−12 °C</b>),</li>
+      <li>powietrze nawiewane ogrzewa się na <span class="term" data-def="Wymiennik pompy ciepła, w którym sprężony gorący czynnik skrapla się, oddając ciepło – tutaj powietrzu nawiewanemu. Zimą pełni funkcję nagrzewnicy.">skraplaczu pompy ciepła</span> o <b>9 K</b>; pomiar za nagrzewnicą, przed komorą zraszania (nawiew <b>26 °C</b>),</li>
+      <li>powietrze usuwane z pomieszczenia (<b>22 °C</b>) – temperatura <b>bez zmian</b> do wejścia do wymiennika obrotowego.</li>
+    </ul>
+  </div>
+
+  <div class="box data">
+    <h4>📊 Pozostałe dane</h4>
+    <ul class="tight">
+      <li>Tabela 4 – <span class="term" data-def="Masa pary wodnej przypadająca na 1 kg powietrza suchego. Oznaczenie x, jednostka g/kg (lub kg/kg). Na wykresie Molliera – oś pozioma.">zawartość wilgoci</span>: lato: przed przemianą <b>10 g/kg</b>, po przemianie <b>5 g/kg</b>; zima: przed <b>5 g/kg</b>, po <b>5 g/kg</b>,</li>
+      <li>Tabela 6 – <span class="term" data-def="Masa 1 m³ powietrza, oznaczenie ρ (ro), jednostka kg/m³. Maleje ze wzrostem temperatury: ok. 1,2 kg/m³ przy 20 °C.">gęstość powietrza</span>: nagrzewnica <b>ρ = 1,21 kg/m³</b>, chłodnica <b>ρ = 1,18 kg/m³</b>,</li>
+      <li>Tabela 7 – wykaz pomieszczeń i wymagana ilość powietrza na osobę.</li>
+    </ul>
+  </div>
+
+  <p><b>Do wykonania (5 rezultatów):</b> 1) temperatury t₁–t₄ – tabela 1; 2) sprawność temperaturowa wymiennika obrotowego – tabele 2 i 3; 3) przemiany na wykresach Molliera + entalpie – tabela 5; 4) moc nagrzewnicy i chłodnicy – tabela 6; 5) wymagany strumień świeżego powietrza i ocena centrali – tabela 7.</p>
+</section>
+
+<!-- ===================== ZADANIE 1 ===================== -->
+<section class="card calc" id="z1">
+  <h2><span class="num">1</span> Tabela 1 – temperatury powietrza w centrali <span class="tag calc">obliczeniowe</span></h2>
+  <p class="sub">Wyznaczenie t₁, t₂, t₃, t₄ dla lata i zimy na podstawie „wskazówek” z arkusza i schematów (rys. 1 i 2).</p>
+
+  <div class="box data theory">
+    <h4>Gdzie leżą punkty pomiarowe? (z rysunków 1 i 2)</h4>
+    <ul class="tight">
+      <li><b>t₁</b> – powietrze nawiewane (świeże) <b>przed</b> wymiennikiem obrotowym (za czerpnią),</li>
+      <li><b>t₂</b> – powietrze nawiewane <b>za</b> wymiennikiem obrotowym (przed chłodnicą/nagrzewnicą),</li>
+      <li><b>t₃</b> – powietrze usuwane <b>przed</b> wymiennikiem obrotowym (od strony pomieszczenia),</li>
+      <li><b>t₄</b> – powietrze usuwane <b>za</b> wymiennikiem obrotowym (przed skraplaczem/parownikiem po stronie wywiewu).</li>
+    </ul>
+    <p style="margin:6px 0 0"><b>Ważne:</b> różnice temperatur podaje się w <span class="term" data-def="Kelwin jako jednostka RÓŻNICY temperatur. Różnica 1 K = różnica 1 °C. Dlatego „podgrzewa się o 1 K” oznacza po prostu „+1 °C”.">kelwinach (K)</span> – 1 K różnicy = 1 °C różnicy, więc po prostu dodajemy/odejmujemy stopnie.</p>
+  </div>
+
+  <details class="sol" open>
+    <summary>Rozwiązanie – okres letni (rys. 1)</summary>
+    <div class="body">
+      <div class="flowtitle">Strona nawiewu (dolny kanał na rys. 1) – powietrze płynie od prawej do lewej:</div>
+      <div class="flow">
+        <div class="fbox">Powietrze zewn.<br><b>32 °C</b></div><div class="arrow">→</div>
+        <div class="fbox dev">Czerpnia<small>+1 K</small></div><div class="arrow">→</div>
+        <div class="fbox t">t₁ = 33 °C</div><div class="arrow">→</div>
+        <div class="fbox rot">Wymiennik obrotowy<small>odzysk chłodu</small></div><div class="arrow">→</div>
+        <div class="fbox t">t₂ = 24 °C</div><div class="arrow">→</div>
+        <div class="fbox dev">Chłodnica (parownik)<small>−7 K</small></div><div class="arrow">→</div>
+        <div class="fbox">Nawiew<br><b>17 °C</b></div>
+      </div>
+
+      <div class="step"><b class="t">Krok 1 – t₁ (przed wymiennikiem, po czerpni)</b>
+        Powietrze zewnętrzne ma 32 °C i w czerpni podgrzewa się o 1 K:
+        <div class="formula">t₁ = 32 °C + 1 K = <b>33 °C</b></div>
+      </div>
+      <div class="step"><b class="t">Krok 2 – t₂ (za wymiennikiem, przed chłodnicą)</b>
+        Znamy temperaturę <b>za</b> chłodnicą (nawiew 17 °C) i wiemy, że chłodnica obniża temperaturę o 7 K. Liczymy więc „wstecz”:
+        <div class="formula">t₂ = 17 °C + 7 K = <b>24 °C</b></div>
+      </div>
+      <div class="flowtitle">Strona wywiewu (górny kanał na rys. 1) – powietrze płynie od lewej do prawej:</div>
+      <div class="flow">
+        <div class="fbox">Pomieszczenie<br><b>20 °C</b></div><div class="arrow">→</div>
+        <div class="fbox dev">Przewody<small>+1 K</small></div><div class="arrow">→</div>
+        <div class="fbox t">t₃ = 21 °C</div><div class="arrow">→</div>
+        <div class="fbox rot">Wymiennik obrotowy<small>przejmuje ciepło</small></div><div class="arrow">→</div>
+        <div class="fbox t">t₄ = 31 °C</div><div class="arrow">→</div>
+        <div class="fbox dev">Skraplacz<small>+9 K</small></div><div class="arrow">→</div>
+        <div class="fbox">Wyrzutnia<br><b>40 °C</b></div>
+      </div>
+      <div class="step"><b class="t">Krok 3 – t₃ (usuwane, przed wymiennikiem)</b>
+        Z pomieszczenia wypływa 20 °C, w przewodach podgrzewa się o 1 K:
+        <div class="formula">t₃ = 20 °C + 1 K = <b>21 °C</b></div>
+      </div>
+      <div class="step"><b class="t">Krok 4 – t₄ (usuwane, za wymiennikiem)</b>
+        Na wylocie z wyrzutni jest 40 °C, a za wymiennikiem obrotowym temperatura jest <b>niższa o 9 K</b>:
+        <div class="formula">t₄ = 40 °C − 9 K = <b>31 °C</b></div>
+      </div>
+      <div class="box warn theory">
+        <h4>Sprawdzenie logiki</h4>
+        Latem świeże powietrze (33 °C) jest cieplejsze niż usuwane (21 °C). Wymiennik obrotowy przekazuje ciepło z nawiewu do wywiewu: nawiew <b>chłodzi się</b> 33 → 24 °C, a wywiew <b>ogrzewa się</b> 21 → 31 °C. Kierunki zmian są zgodne z fizyką – wynik jest wiarygodny. Dopiero potem skraplacz dogrzewa wywiew do 40 °C (ciepło odpadowe z chłodzenia wyrzucamy na zewnątrz).
+      </div>
+    </div>
+  </details>
+
+  <details class="sol" open>
+    <summary>Rozwiązanie – okres zimowy (rys. 2)</summary>
+    <div class="body">
+      <div class="flowtitle">Strona nawiewu:</div>
+      <div class="flow">
+        <div class="fbox">Powietrze zewn.<br><b>−16 °C</b></div><div class="arrow">→</div>
+        <div class="fbox dev">Czerpnia<small>+2 K</small></div><div class="arrow">→</div>
+        <div class="fbox t">t₁ = −14 °C</div><div class="arrow">→</div>
+        <div class="fbox rot">Wymiennik obrotowy<small>odzysk ciepła</small></div><div class="arrow">→</div>
+        <div class="fbox t">t₂ = 17 °C</div><div class="arrow">→</div>
+        <div class="fbox dev">Nagrzewnica (skraplacz)<small>+9 K</small></div><div class="arrow">→</div>
+        <div class="fbox">Nawiew<br><b>26 °C</b></div>
+      </div>
+      <div class="step"><b class="t">Krok 1 – t₁</b>
+        <div class="formula">t₁ = −16 °C + 2 K = <b>−14 °C</b></div>
+      </div>
+      <div class="step"><b class="t">Krok 2 – t₂</b>
+        Za nagrzewnicą (skraplaczem) jest 26 °C, nagrzewnica podnosi temperaturę o 9 K, zatem przed nią:
+        <div class="formula">t₂ = 26 °C − 9 K = <b>17 °C</b></div>
+      </div>
+      <div class="flowtitle">Strona wywiewu:</div>
+      <div class="flow">
+        <div class="fbox">Pomieszczenie<br><b>22 °C</b></div><div class="arrow">→</div>
+        <div class="fbox dev">Przewody<small>bez zmian</small></div><div class="arrow">→</div>
+        <div class="fbox t">t₃ = 22 °C</div><div class="arrow">→</div>
+        <div class="fbox rot">Wymiennik obrotowy<small>oddaje ciepło</small></div><div class="arrow">→</div>
+        <div class="fbox t">t₄ = −7 °C</div><div class="arrow">→</div>
+        <div class="fbox dev">Parownik<small>−5 K</small></div><div class="arrow">→</div>
+        <div class="fbox">Wyrzutnia<br><b>−12 °C</b></div>
+      </div>
+      <div class="step"><b class="t">Krok 3 – t₃</b>
+        Temperatura powietrza usuwanego „pozostaje bez zmian” do wejścia w wymiennik:
+        <div class="formula">t₃ = <b>22 °C</b></div>
+      </div>
+      <div class="step"><b class="t">Krok 4 – t₄</b>
+        Na wyrzutni −12 °C, a za wymiennikiem obrotowym temperatura jest <b>wyższa o 5 K</b>:
+        <div class="formula">t₄ = −12 °C + 5 K = <b>−7 °C</b></div>
+      </div>
+      <div class="box warn theory">
+        <h4>Sprawdzenie logiki</h4>
+        Zimą wywiew (22 °C) oddaje ciepło nawiewowi: nawiew grzeje się −14 → 17 °C (+31 K), wywiew chłodzi się 22 → −7 °C (−29 K). Następnie parownik pompy ciepła „dobiera” jeszcze ciepło z wywiewu (−7 → −12 °C) i przekazuje je przez skraplacz do nawiewu (17 → 26 °C). Wszystko się zgadza.
+      </div>
+    </div>
+  </details>
+
+  <div class="box result">
+    <h4>✅ Tabela 1 – wypełniona</h4>
+    <div class="tablewrap">
+    <table>
+      <tr><th colspan="2">Okres letni – rys. 1</th><th colspan="2">Okres zimowy – rys. 2</th></tr>
+      <tr><th>Punkt</th><th>Temperatura [°C]</th><th>Punkt</th><th>Temperatura [°C]</th></tr>
+      <tr><td>t₁</td><td class="res">33</td><td>t₁</td><td class="res">−14</td></tr>
+      <tr><td>t₂</td><td class="res">24</td><td>t₂</td><td class="res">17</td></tr>
+      <tr><td>t₃</td><td class="res">21</td><td>t₃</td><td class="res">22</td></tr>
+      <tr><td>t₄</td><td class="res">31</td><td>t₄</td><td class="res">−7</td></tr>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ZADANIE 2 ===================== -->
+<section class="card calc" id="z2">
+  <h2><span class="num">2</span> Tabele 2 i 3 – sprawność temperaturowa wymiennika obrotowego <span class="tag calc">obliczeniowe</span></h2>
+  <p class="sub">Obliczenie η<sub>t</sub> dla lata i zimy z temperatur t₁, t₂, t₃ wyznaczonych w tabeli 1.</p>
+
+  <div class="box data">
+    <h4>Wzór z arkusza</h4>
+    <div class="formula">η<sub>t</sub> = <span class="frac"><span>t₂ − t₁</span><span>t₃ − t₁</span></span> · 100 %</div>
+    <p style="margin:6px 0 0"><span class="term" data-def="Stosunek rzeczywistej zmiany temperatury powietrza nawiewanego w wymienniku do maksymalnej możliwej zmiany (różnicy temperatur między powietrzem usuwanym a zewnętrznym). Mówi, jaką część dostępnej różnicy temperatur udało się „odzyskać”.">Sprawność temperaturowa</span>: licznik = o ile <b>faktycznie</b> zmieniła się temperatura nawiewu w wymienniku; mianownik = <b>maksymalna możliwa</b> zmiana (gdyby nawiew osiągnął temperaturę wywiewu).</p>
+    <p style="margin:6px 0 0"><b>Dane:</b> t₁, t₂ – nawiew przed/za wymiennikiem; t₃ – wywiew przed wymiennikiem (tabela 1). <b>Szukane:</b> η<sub>t,lato</sub>, η<sub>t,zima</sub>.</p>
+  </div>
+
+  <details class="sol" open>
+    <summary>Rozwiązanie – okres letni</summary>
+    <div class="body">
+      <div class="step"><b class="t">Krok 1 – przepisujemy temperatury (tabela 2)</b>
+        t₁ = 33 °C, t₂ = 24 °C, t₃ = 21 °C
+      </div>
+      <div class="step"><b class="t">Krok 2 – podstawiamy</b>
+        <div class="formula">η<sub>t</sub> = <span class="frac"><span>24 − 33</span><span>21 − 33</span></span> · 100 % = <span class="frac"><span>−9 K</span><span>−12 K</span></span> · 100 % = 0,75 · 100 % = <b>75 %</b></div>
+        <p style="margin:6px 0 0">Latem obie różnice są <b>ujemne</b> (nawiew się chłodzi, bo wywiew jest zimniejszy). Iloraz dwóch liczb ujemnych jest dodatni – sprawność wychodzi 75 %. Nie wolno „zgubić” minusa tylko w jednym miejscu!</p>
+      </div>
+    </div>
+  </details>
+
+  <details class="sol" open>
+    <summary>Rozwiązanie – okres zimowy</summary>
+    <div class="body">
+      <div class="step"><b class="t">Krok 1 – temperatury (tabela 2)</b>
+        t₁ = −14 °C, t₂ = 17 °C, t₃ = 22 °C
+      </div>
+      <div class="step"><b class="t">Krok 2 – podstawiamy (uwaga na odejmowanie liczby ujemnej)</b>
+        <div class="formula">η<sub>t</sub> = <span class="frac"><span>17 − (−14)</span><span>22 − (−14)</span></span> · 100 % = <span class="frac"><span>31 K</span><span>36 K</span></span> · 100 % = 0,861 · 100 % ≈ <b>86,1 %</b></div>
+        <p style="margin:6px 0 0">17 − (−14) = 17 + 14 = 31; 22 − (−14) = 36. Wynik można zapisać jako 86,1 % (lub 86 % przy zaokrągleniu do liczb całkowitych – oba akceptowalne, ale najlepiej podać z jednym miejscem po przecinku).</p>
+      </div>
+    </div>
+  </details>
+
+  <div class="box result">
+    <h4>✅ Tabela 2 – temperatury bezpośrednio przy wymienniku obrotowym</h4>
+    <div class="tablewrap">
+    <table>
+      <tr><th colspan="2">Dla okresu letniego</th><th colspan="2">Dla okresu zimowego</th></tr>
+      <tr><td>t₁</td><td class="res">33 °C</td><td>t₁</td><td class="res">−14 °C</td></tr>
+      <tr><td>t₂</td><td class="res">24 °C</td><td>t₂</td><td class="res">17 °C</td></tr>
+      <tr><td>t₃</td><td class="res">21 °C</td><td>t₃</td><td class="res">22 °C</td></tr>
+    </table>
+    </div>
+    <h4 style="margin-top:12px">✅ Tabela 3 – sprawność temperaturowa</h4>
+    <div class="tablewrap">
+    <table>
+      <tr><th>Okres letni</th><th>Okres zimowy</th></tr>
+      <tr><td class="res">η<sub>t</sub> = (24−33)/(21−33) · 100 % = 75 %</td><td class="res">η<sub>t</sub> = (17+14)/(22+14) · 100 % ≈ 86,1 %</td></tr>
+    </table>
+    </div>
+    <p class="theory" style="margin:8px 0 0">Wartości 75–86 % to typowy zakres dla wymienników obrotowych – kolejne potwierdzenie, że temperatury z tabeli 1 są poprawne.</p>
+  </div>
+</section>
+
+<!-- ===================== ZADANIE 3 ===================== -->
+<section class="card calc" id="z3">
+  <h2><span class="num">3</span> Wykresy Molliera i Tabela 5 – entalpie właściwe <span class="tag chart">wykres</span> <span class="tag calc">obliczeniowe</span></h2>
+  <p class="sub">Naniesienie przemian L1→L2 (chłodzenie latem) i Z3→Z4 (ogrzewanie zimą) oraz odczyt entalpii i.</p>
+
+  <div class="box data">
+    <h4>Dane do naniesienia punktów</h4>
+    <p style="margin:0 0 6px">Punkt na <span class="term" data-def="Wykres i–x (entalpia – zawartość wilgoci) powietrza wilgotnego. Na osi pionowej temperatura, na poziomej zawartość wilgoci x, ukośne linie – entalpia właściwa i, krzywe – wilgotność względna φ. Pozwala graficznie śledzić przemiany powietrza (ogrzewanie, chłodzenie, nawilżanie).">wykresie Molliera</span> określają dwie współrzędne: temperatura <b>t</b> (oś pionowa) i zawartość wilgoci <b>x</b> (oś pozioma, tabela 4).</p>
+    <div class="tablewrap">
+    <table>
+      <tr><th>Punkt</th><th>Opis</th><th>t [°C]</th><th>x [g/kg]</th></tr>
+      <tr><td><b>L1</b></td><td class="l">lato – przed chłodnicą (= t₂ lato)</td><td>24</td><td>10</td></tr>
+      <tr><td><b>L2</b></td><td class="l">lato – za chłodnicą (nawiew)</td><td>17</td><td>5</td></tr>
+      <tr><td><b>Z3</b></td><td class="l">zima – przed nagrzewnicą (= t₂ zima)</td><td>17</td><td>5</td></tr>
+      <tr><td><b>Z4</b></td><td class="l">zima – za nagrzewnicą (nawiew)</td><td>26</td><td>5</td></tr>
+    </table>
+    </div>
+    <p style="margin:6px 0 0"><b>Uwaga:</b> punkty L2 i Z3 mają te same współrzędne (17 °C; 5 g/kg) – na obu wykresach wypadają w tym samym miejscu, ale rysujemy je na osobnych rysunkach (rys. 3 i rys. 4).</p>
+  </div>
+
+  <details class="sol" open>
+    <summary>Jak narysować przemiany na wykresie (rys. 3 i 4)</summary>
+    <div class="body">
+      <div class="step"><b class="t">Krok 1 – L1 (rys. 3)</b> Na osi poziomej znajdź x = 10 g/kg, idź pionowo do góry do <span class="term" data-def="Linia na wykresie Molliera łącząca punkty o tej samej temperaturze. Na wykresie z arkusza izotermy są niemal poziome, lekko wznoszące się w prawo.">izotermy</span> 24 °C. Zaznacz L1.</div>
+      <div class="step"><b class="t">Krok 2 – L2 (rys. 3)</b> x = 5 g/kg, izoterma 17 °C. Zaznacz L2. Narysuj strzałkę <b>L1 → L2</b> – linia idzie w dół i w lewo (spadek temperatury i zawartości wilgoci = <span class="term" data-def="Chłodzenie powietrza poniżej punktu rosy: wykrapla się para wodna, więc maleje zarówno temperatura, jak i zawartość wilgoci x. Na wykresie Molliera – przemiana w dół i w lewo.">chłodzenie z osuszaniem</span>).</div>
+      <div class="step"><b class="t">Krok 3 – Z3 (rys. 4)</b> x = 5 g/kg, izoterma 17 °C. Zaznacz Z3.</div>
+      <div class="step"><b class="t">Krok 4 – Z4 (rys. 4)</b> x = 5 g/kg, izoterma 26 °C. Zaznacz Z4. Strzałka <b>Z3 → Z4</b> pionowo w górę (<span class="term" data-def="Ogrzewanie powietrza w nagrzewnicy nie zmienia ilości pary wodnej w powietrzu – x = const. Na wykresie Molliera to pionowa linia w górę; rośnie temperatura i entalpia, maleje wilgotność względna φ.">ogrzewanie przy x = const</span>).</div>
+      <div class="step"><b class="t">Krok 5 – odczyt entalpii</b> Przez każdy punkt poprowadź linię równoległą do ukośnych <span class="term" data-def="Linia stałej entalpii właściwej na wykresie Molliera – ukośna, opadająca w prawo. Wartość odczytuje się na skali ukośnej wzdłuż krzywej nasycenia.">izentalp</span> i odczytaj wartość na skali „Entalpia właściwa i [kJ/kg]”.</div>
+
+      <p><b>Schemat poglądowy (uproszczony wykres i–x, ten sam układ osi co w arkuszu):</b></p>
+      <svg id="mollier" class="chart" viewBox="0 0 640 460" role="img" aria-label="Uproszczony wykres Molliera z punktami L1, L2, Z3, Z4"></svg>
+      <div class="legend">
+        <span style="--c:#0f766e">linia nasycenia φ = 100 %</span>
+        <span style="--c:#9ca3af">izentalpy i = const</span>
+        <span style="--c:#1d4ed8">L1 → L2 chłodzenie z osuszaniem</span>
+        <span style="--c:#dc2626">Z3 → Z4 ogrzewanie (x = const)</span>
+      </div>
+    </div>
+  </details>
+
+  <details class="sol" open>
+    <summary>Odczyt i sprawdzenie rachunkowe entalpii (tabela 5)</summary>
+    <div class="body">
+      <p class="theory">Na egzaminie wartości odczytuje się z wykresu (dopuszczalna tolerancja odczytu ok. ±1 kJ/kg). Żeby mieć pewność, warto sprawdzić je wzorem na <span class="term" data-def="Energia zawarta w 1 kg powietrza suchego wraz z zawartą w nim parą wodną, liczona od stanu odniesienia 0 °C. Oznaczenie i (lub h), jednostka kJ/kg. Różnica entalpii przed i po przemianie mówi, ile energii dostarczono lub odebrano powietrzu.">entalpię właściwą</span> powietrza wilgotnego:</p>
+      <div class="formula">i = 1,005 · t + x · (2501 + 1,86 · t) &nbsp;[kJ/kg], &nbsp; x w kg/kg</div>
+      <div class="step"><b class="t">L1: t = 24 °C, x = 0,010 kg/kg</b>
+        <div class="formula">i₁ = 1,005·24 + 0,010·(2501 + 1,86·24) = 24,12 + 0,010·2545,6 = 24,12 + 25,46 ≈ <b>49,6 kJ/kg</b></div>
+        Odczyt z wykresu: ≈ 50 kJ/kg (izentalpa 50 przechodzi tuż nad punktem).
+      </div>
+      <div class="step"><b class="t">L2: t = 17 °C, x = 0,005 kg/kg</b>
+        <div class="formula">i₂ = 1,005·17 + 0,005·(2501 + 1,86·17) = 17,09 + 0,005·2532,6 = 17,09 + 12,66 ≈ <b>29,7 kJ/kg</b></div>
+        Odczyt z wykresu: ≈ 30 kJ/kg.
+      </div>
+      <div class="step"><b class="t">Z3: t = 17 °C, x = 0,005 kg/kg</b>
+        Identyczny stan jak L2: <b>i₃ ≈ 29,7 kJ/kg</b> (odczyt ≈ 30 kJ/kg).
+      </div>
+      <div class="step"><b class="t">Z4: t = 26 °C, x = 0,005 kg/kg</b>
+        <div class="formula">i₄ = 1,005·26 + 0,005·(2501 + 1,86·26) = 26,13 + 0,005·2549,4 = 26,13 + 12,75 ≈ <b>38,9 kJ/kg</b></div>
+        Odczyt z wykresu: ≈ 39 kJ/kg.
+      </div>
+    </div>
+  </details>
+
+  <div class="box result">
+    <h4>✅ Tabela 5 – entalpia właściwa powietrza wilgotnego [kJ/kg]</h4>
+    <div class="tablewrap">
+    <table>
+      <tr><th colspan="2">Chłodzenie powietrza</th><th colspan="2">Ogrzewanie powietrza</th></tr>
+      <tr><td>i₁ (punkt L1)</td><td class="res">≈ 49,6 (odczyt ~50)</td><td>i₃ (punkt Z3)</td><td class="res">≈ 29,7 (odczyt ~30)</td></tr>
+      <tr><td>i₂ (punkt L2)</td><td class="res">≈ 29,7 (odczyt ~30)</td><td>i₄ (punkt Z4)</td><td class="res">≈ 38,9 (odczyt ~39)</td></tr>
+    </table>
+    </div>
+    <p style="margin:8px 0 0">Różnice entalpii: <b>Δi<sub>Ch</sub> = i₁ − i₂ ≈ 49,6 − 29,7 = 19,9 kJ/kg</b> (z odczytu: 50 − 30 = 20), &nbsp; <b>Δi<sub>N</sub> = i₄ − i₃ ≈ 38,9 − 29,7 = 9,2 kJ/kg</b> (z odczytu: 39 − 30 = 9).</p>
+  </div>
+</section>
+
+<!-- ===================== ZADANIE 4 ===================== -->
+<section class="card calc" id="z4">
+  <h2><span class="num">4</span> Tabela 6 – moc nagrzewnicy i chłodnicy <span class="tag calc">obliczeniowe</span></h2>
+  <p class="sub">Obliczenie mocy skraplacza (nagrzewnicy) i parownika (chłodnicy) pompy ciepła.</p>
+
+  <div class="box data">
+    <h4>Dane i szukane</h4>
+    <ul class="tight">
+      <li><span class="term" data-def="Objętość powietrza przepływająca w jednostce czasu. Oznaczenie V̇ (V z kropką), jednostki m³/h lub m³/s. 1 m³/s = 3600 m³/h.">Strumień objętości</span> powietrza: V̇ = 7200 m³/h – <b>do wzoru w m³/s!</b></li>
+      <li>Gęstość: nagrzewnica ρ = 1,21 kg/m³, chłodnica ρ = 1,18 kg/m³ (z tabeli 6)</li>
+      <li>Δi – z tabeli 5: Δi<sub>N</sub> ≈ 9,2 kJ/kg, Δi<sub>Ch</sub> ≈ 19,9 kJ/kg</li>
+      <li><b>Szukane:</b> Q̇<sub>N</sub>, Q̇<sub>Ch</sub> [kW], zaokrąglone do dwóch miejsc po przecinku</li>
+    </ul>
+    <div class="formula">Q̇<sub>N</sub> = V̇ · ρ · Δi &nbsp;[kW] &nbsp;&nbsp;&nbsp; Q̇<sub>Ch</sub> = V̇ · ρ · Δi &nbsp;[kW]</div>
+    <p class="theory" style="margin:6px 0 0"><b>Skąd biorą się jednostki?</b> [m³/s] · [kg/m³] · [kJ/kg] = [kJ/s] = <span class="term" data-def="Kilowat = 1000 W = 1 kJ/s. Jednostka mocy cieplnej – ilości energii przekazywanej w ciągu sekundy.">[kW]</span>. Dlatego strumień musi być w m³/s – gdybyśmy zostawili m³/h, wynik byłby 3600 razy za duży.</p>
+  </div>
+
+  <details class="sol" open>
+    <summary>Rozwiązanie</summary>
+    <div class="body">
+      <div class="step"><b class="t">Krok 1 – przeliczenie strumienia</b>
+        <div class="formula">V̇ = 7200 m³/h = <span class="frac"><span>7200</span><span>3600</span></span> m³/s = <b>2 m³/s</b></div>
+      </div>
+      <div class="step"><b class="t">Krok 2 – moc nagrzewnicy (skraplacza), okres zimowy</b>
+        <div class="formula">Q̇<sub>N</sub> = 2 m³/s · 1,21 kg/m³ · 9,2 kJ/kg = 2,42 · 9,2 = <b>22,26 kW</b></div>
+        Przy odczycie Δi = 9 kJ/kg: Q̇<sub>N</sub> = 2 · 1,21 · 9 = <b>21,78 kW</b>.
+      </div>
+      <div class="step"><b class="t">Krok 3 – moc chłodnicy (parownika), okres letni</b>
+        <div class="formula">Q̇<sub>Ch</sub> = 2 m³/s · 1,18 kg/m³ · 19,9 kJ/kg = 2,36 · 19,9 = <b>46,96 kW</b></div>
+        Przy odczycie Δi = 20 kJ/kg: Q̇<sub>Ch</sub> = 2 · 1,18 · 20 = <b>47,20 kW</b>.
+      </div>
+      <div class="box warn">
+        <h4>Który wynik wpisać?</h4>
+        Egzaminator sprawdza <b>spójność</b>: moc musi wynikać z Δi wpisanego do tabeli 5/6 (kolumna 4) i strumienia w m³/s, z zaokrągleniem do dwóch miejsc. Oba warianty (z odczytu „okrągłego” lub dokładniejszego) mieszczą się w tolerancji odczytu z wykresu. Poniżej przyjęto wartości z odczytu wykresu (20 i 9 kJ/kg) – najprostsze i najczęściej spotykane w kluczu.
+      </div>
+    </div>
+  </details>
+
+  <div class="box result">
+    <h4>✅ Tabela 6 – moce nagrzewnicy i chłodnicy powietrza</h4>
+    <div class="tablewrap">
+    <table>
+      <tr><th>Wymiennik</th><th>V̇ [m³/s]</th><th>ρ [kg/m³]</th><th>Δi [kJ/kg]</th><th>Q̇ [kW]</th></tr>
+      <tr><td class="l">Nagrzewnica</td><td class="res">2</td><td>1,21</td><td class="res">9 (≈9,2)</td><td class="res">21,78 (≈22,26)</td></tr>
+      <tr><td class="l">Chłodnica</td><td class="res">2</td><td>1,18</td><td class="res">20 (≈19,9)</td><td class="res">47,20 (≈46,96)</td></tr>
+    </table>
+    </div>
+    <p class="theory" style="margin:8px 0 0">Chłodnica ma ponad dwukrotnie większą moc niż nagrzewnica, bo latem oprócz obniżenia temperatury (24 → 17 °C) powietrze jest też <b>osuszane</b> (10 → 5 g/kg) – wykroplenie pary wodnej pochłania dużo energii (ciepło utajone). Zimą nagrzewnica zmienia tylko temperaturę (ciepło jawne).</p>
+  </div>
+</section>
+
+<!-- ===================== ZADANIE 5 ===================== -->
+<section class="card calc" id="z5">
+  <h2><span class="num">5</span> Tabela 7 – wymagana ilość świeżego powietrza <span class="tag calc">obliczeniowe</span></h2>
+  <p class="sub">Sumaryczne zapotrzebowanie na <span class="term" data-def="Powietrze zewnętrzne (świeże) dostarczane do pomieszczeń w celu rozcieńczenia zanieczyszczeń, CO₂ i zapachów. Minimalna ilość zależy od liczby osób i przeznaczenia pomieszczenia (np. 30 m³/h na osobę w biurach).">powietrze świeże</span> i ocena, czy centrala 7200 m³/h wystarczy.</p>
+
+  <div class="box data">
+    <h4>Zasada obliczeń</h4>
+    <div class="formula">V̇<sub>pom</sub> = liczba pomieszczeń · liczba osób w pomieszczeniu · ilość powietrza na osobę &nbsp;[m³/h]</div>
+    <p style="margin:6px 0 0">Wynik dla każdego wiersza sumujemy i porównujemy z wydajnością centrali V̇ = 7200 m³/h.</p>
+  </div>
+
+  <details class="sol" open>
+    <summary>Rozwiązanie</summary>
+    <div class="body">
+      <div class="step"><b class="t">Wiersz 1 – Gabinet lekarski</b><div class="formula">28 · 3 · 30 = 84 · 30 = <b>2520 m³/h</b></div></div>
+      <div class="step"><b class="t">Wiersz 2 – Pomieszczenie bezokienne</b><div class="formula">16 · 1 · 15 = <b>240 m³/h</b></div></div>
+      <div class="step"><b class="t">Wiersz 3 – Łazienka z WC</b><div class="formula">12 · 1 · 50 = <b>600 m³/h</b></div></div>
+      <div class="step"><b class="t">Wiersz 4 – Pomieszczenie biurowe</b><div class="formula">16 · 2 · 30 = 32 · 30 = <b>960 m³/h</b></div></div>
+      <div class="step"><b class="t">Wiersz 5 – Poczekalnia</b><div class="formula">8 · 10 · 30 = 80 · 30 = <b>2400 m³/h</b></div></div>
+      <div class="step"><b class="t">Wiersz 6 – Suma</b><div class="formula">2520 + 240 + 600 + 960 + 2400 = <b>6720 m³/h</b></div></div>
+      <div class="step"><b class="t">Ocena</b>
+        <div class="formula">V̇<sub>centrali</sub> = 7200 m³/h &nbsp;≥&nbsp; V̇<sub>wymagane</sub> = 6720 m³/h &nbsp;→&nbsp; <span class="badge-ok">TAK</span></div>
+        Centrala ma zapas 7200 − 6720 = 480 m³/h (ok. 7 %). Dobrana centrala <b>zapewnia</b> wymaganą ilość świeżego powietrza – na arkuszu skreślamy „Nie”.
+      </div>
+    </div>
+  </details>
+
+  <div class="box result">
+    <h4>✅ Tabela 7 – wypełniona</h4>
+    <div class="tablewrap">
+    <table>
+      <tr><th>Lp.</th><th class="l">Nazwa pomieszczenia</th><th>Liczba pomieszczeń</th><th>Osób</th><th>m³/h na osobę</th><th>Suma [m³/h]</th></tr>
+      <tr><td>1</td><td class="l">Gabinet lekarski</td><td>28</td><td>3</td><td>30</td><td class="res">2520</td></tr>
+      <tr><td>2</td><td class="l">Pomieszczenie bezokienne</td><td>16</td><td>1</td><td>15</td><td class="res">240</td></tr>
+      <tr><td>3</td><td class="l">Łazienka z WC</td><td>12</td><td>1</td><td>50</td><td class="res">600</td></tr>
+      <tr><td>4</td><td class="l">Pomieszczenie biurowe</td><td>16</td><td>2</td><td>30</td><td class="res">960</td></tr>
+      <tr><td>5</td><td class="l">Poczekalnia</td><td>8</td><td>10</td><td>30</td><td class="res">2400</td></tr>
+      <tr><td>6</td><td colspan="4" style="text-align:right"><b>Suma:</b></td><td class="res">6720</td></tr>
+      <tr><td colspan="6" class="l"><b>OCENA:</b> Dobrana centrala zapewnia wymaganą ilość świeżego powietrza: <span class="badge-ok">Tak</span> / <s>Nie</s></td></tr>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PODSUMOWANIE ===================== -->
+<section class="card" id="wyniki">
+  <h2><span class="num">✓</span> Podsumowanie wyników</h2>
+  <p class="sub">Ściąga do szybkiego porównania z własnym arkuszem.</p>
+  <div class="summary-grid">
+    <div class="sitem"><b>Tabela 1 – lato</b> t₁ = 33 °C, t₂ = 24 °C, t₃ = 21 °C, t₄ = 31 °C</div>
+    <div class="sitem"><b>Tabela 1 – zima</b> t₁ = −14 °C, t₂ = 17 °C, t₃ = 22 °C, t₄ = −7 °C</div>
+    <div class="sitem"><b>Tabela 3 – sprawność</b> lato η<sub>t</sub> = 75 %; zima η<sub>t</sub> ≈ 86,1 %</div>
+    <div class="sitem"><b>Tabela 5 – entalpie</b> i₁ ≈ 50, i₂ ≈ 30, i₃ ≈ 30, i₄ ≈ 39 kJ/kg</div>
+    <div class="sitem"><b>Tabela 6 – moce</b> Q̇<sub>N</sub> ≈ 21,78 kW (Δi = 9); Q̇<sub>Ch</sub> ≈ 47,20 kW (Δi = 20); V̇ = 2 m³/s</div>
+    <div class="sitem"><b>Tabela 7 – powietrze świeże</b> suma 6720 m³/h ≤ 7200 m³/h → <b>TAK</b></div>
+  </div>
+  <div class="box warn theory" style="margin-top:14px">
+    <h4>Najczęstsze błędy na tym arkuszu</h4>
+    <ul class="tight">
+      <li>Pomylenie kierunku liczenia „wstecz” (np. t₂ lato = 17 − 7 zamiast 17 + 7).</li>
+      <li>Zgubienie znaku minus w sprawności letniej lub przy −14 °C zimą.</li>
+      <li>Podstawienie 7200 m³/h zamiast 2 m³/s do wzoru na moc (wynik 3600× za duży).</li>
+      <li>Rysowanie przemiany Z3→Z4 ukośnie – ogrzewanie w nagrzewnicy to linia <b>pionowa</b> (x = const).</li>
+      <li>Brak strzałek kierunku przemian i opisów punktów L1, L2, Z3, Z4 na wykresach.</li>
+      <li>Brak zaokrąglenia mocy do dwóch miejsc po przecinku.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== SŁOWNICZEK ===================== -->
+<section class="card theory" id="slownik">
+  <h2><span class="num">📖</span> Słowniczek pojęć</h2>
+  <p class="sub">Te same definicje, które pojawiają się w dymkach – zebrane w jednym miejscu.</p>
+  <div class="glossary" id="glossary"></div>
+</section>
+
+<footer>Rozwiązanie opracowane na podstawie arkusza ELE.04-01-26.01-SG (CKE, styczeń 2026). Wartości entalpii odczytane z wykresu Molliera mogą różnić się o ±1 kJ/kg – to normalna tolerancja odczytu.</footer>
+</div>
+
+<div id="tip" role="tooltip"><div class="arr"></div><b id="tipTitle"></b><span id="tipText"></span></div>
+
+<script>
+(function(){
+  /* ---------- TOOLTIP / POPOVER ---------- */
+  var tip=document.getElementById('tip'), tipTitle=document.getElementById('tipTitle'), tipText=document.getElementById('tipText');
+  var arr=tip.querySelector('.arr');
+  var canHover=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var pinned=null;
+
+  function show(el){
+    tipTitle.textContent=el.textContent.replace(/\s+/g,' ').trim();
+    tipText.textContent=el.getAttribute('data-def');
+    tip.style.display='block';
+    var r=el.getBoundingClientRect(), sx=window.scrollX, sy=window.scrollY;
+    var tw=tip.offsetWidth, th=tip.offsetHeight, vw=document.documentElement.clientWidth;
+    var left=r.left+sx+r.width/2-tw/2;
+    left=Math.max(sx+12, Math.min(left, sx+vw-tw-12));
+    var below = (r.bottom+th+16) < window.innerHeight || r.top < th+16;
+    var top = below ? r.bottom+sy+10 : r.top+sy-th-10;
+    tip.className = below ? 'below' : 'above';
+    tip.style.left=left+'px'; tip.style.top=top+'px';
+    var ax=r.left+sx+r.width/2-left-6; arr.style.left=Math.max(10,Math.min(tw-22,ax))+'px';
+  }
+  function hide(){ tip.style.display='none'; if(pinned){pinned.classList.remove('open');pinned=null;} }
+
+  var terms=document.querySelectorAll('.term');
+  terms.forEach(function(el){
+    el.setAttribute('tabindex','0'); el.setAttribute('role','button');
+    el.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(pinned===el){ hide(); return; }
+      if(pinned) pinned.classList.remove('open');
+      pinned=el; el.classList.add('open'); show(el);
+    });
+    if(canHover){
+      el.addEventListener('mouseenter',function(){ if(!pinned) show(el); });
+      el.addEventListener('mouseleave',function(){ if(!pinned) tip.style.display='none'; });
+    }
+    el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();} if(e.key==='Escape') hide(); });
+  });
+  document.addEventListener('click',function(e){ if(!tip.contains(e.target)) hide(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') hide(); });
+  window.addEventListener('scroll',function(){ if(pinned) show(pinned); },{passive:true});
+  window.addEventListener('resize',function(){ if(pinned) show(pinned); });
+
+  /* ---------- SŁOWNICZEK (generowany z dymków) ---------- */
+  var seen={}, g=document.getElementById('glossary');
+  terms.forEach(function(el){
+    var name=el.textContent.replace(/\s+/g,' ').trim(); var key=name.toLowerCase();
+    if(seen[key]) return; seen[key]=1;
+    var d=document.createElement('div'); d.className='gitem';
+    d.innerHTML='<b></b><br>'; d.querySelector('b').textContent=name;
+    d.appendChild(document.createTextNode(el.getAttribute('data-def')));
+    g.appendChild(d);
+  });
+
+  /* ---------- ROZWIŃ / ZWIŃ / FILTR ---------- */
+  var sols=document.querySelectorAll('details.sol');
+  document.getElementById('btnExpand').onclick=function(){ sols.forEach(function(d){d.open=true;}); };
+  document.getElementById('btnCollapse').onclick=function(){ sols.forEach(function(d){d.open=false;}); };
+  var calcBtn=document.getElementById('btnCalcOnly'), calcOnly=false;
+  calcBtn.onclick=function(){
+    calcOnly=!calcOnly; calcBtn.classList.toggle('active',calcOnly); calcBtn.setAttribute('aria-pressed',calcOnly);
+    calcBtn.textContent = calcOnly ? 'Pokaż wszystko (z teorią)' : 'Pokaż tylko zadania obliczeniowe';
+    document.querySelectorAll('.theory').forEach(function(el){ el.classList.toggle('hidden',calcOnly); });
+  };
+
+  /* ---------- UPROSZCZONY WYKRES MOLLIERA (SVG) ---------- */
+  var svg=document.getElementById('mollier'); var NS='http://www.w3.org/2000/svg';
+  var X0=60,Y0=20,W=540,H=380; var xmax=20,tmin=0,tmax=35;
+  function px(x){return X0+x/xmax*W;} function py(t){return Y0+H-(t-tmin)/(tmax-tmin)*H;}
+  function add(tag,attrs,text){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;svg.appendChild(e);return e;}
+  function xs(t){ var p=610.78*Math.exp(17.27*t/(t+237.3)); return 622*p/(101325-p); } // g/kg przy nasyceniu
+  function tOfI(i,x){ x=x/1000; return (i-x*2501)/(1.005+1.86*x); }
+  // siatka
+  for(var x=0;x<=xmax;x+=5){ add('line',{x1:px(x),y1:py(tmin),x2:px(x),y2:py(tmax),stroke:'#e5e7eb'}); add('text',{x:px(x),y:py(tmin)+18,'text-anchor':'middle','font-size':'12',fill:'#374151'},x); }
+  for(var t=0;t<=tmax;t+=5){ add('line',{x1:px(0),y1:py(t),x2:px(xmax),y2:py(t),stroke:'#e5e7eb'}); add('text',{x:px(0)-8,y:py(t)+4,'text-anchor':'end','font-size':'12',fill:'#374151'},t); }
+  add('text',{x:px(xmax/2),y:py(tmin)+40,'text-anchor':'middle','font-size':'13',fill:'#374151'},'zawartość wilgoci x [g/kg]');
+  add('text',{x:16,y:py(tmax/2),'text-anchor':'middle','font-size':'13',fill:'#374151',transform:'rotate(-90 16 '+py(tmax/2)+')'},'temperatura t [°C]');
+  // izentalpy
+  [10,20,30,40,50,60].forEach(function(i){
+    var pts=[]; for(var x=0;x<=xmax;x+=0.5){ var t=tOfI(i,x); if(t>=tmin&&t<=tmax) pts.push(px(x)+','+py(t)); }
+    if(pts.length<2) return;
+    add('polyline',{points:pts.join(' '),fill:'none',stroke:'#9ca3af','stroke-width':'1.2','stroke-dasharray':'4 3'});
+    // etykieta na końcu linii
+    var last=pts[pts.length-1].split(','); var first=pts[0].split(',');
+    var lx=+last[0], ly=+last[1];
+    add('text',{x:lx+4,y:ly-4,'font-size':'11',fill:'#6b7280'},'i='+i);
+  });
+  // linia nasycenia
+  var sp=[]; for(var t=tmin;t<=tmax;t+=0.5){ var x=xs(t); if(x<=xmax) sp.push(px(x)+','+py(t)); }
+  add('polyline',{points:sp.join(' '),fill:'none',stroke:'#0f766e','stroke-width':'2.5'});
+  add('text',{x:px(15)+6,y:py(20.5),'font-size':'12',fill:'#0f766e','font-weight':'700'},'φ = 100 %');
+  // strzałki
+  var defs=add('defs',{});
+  ['#1d4ed8','#dc2626'].forEach(function(c,i){
+    var m=document.createElementNS(NS,'marker'); m.setAttribute('id','ar'+i); m.setAttribute('markerUnits','userSpaceOnUse'); m.setAttribute('markerWidth','14'); m.setAttribute('markerHeight','14'); m.setAttribute('refX','8'); m.setAttribute('refY','5'); m.setAttribute('viewBox','0 0 10 10'); m.setAttribute('orient','auto');
+    var p=document.createElementNS(NS,'path'); p.setAttribute('d','M0,0 L10,5 L0,10 z'); p.setAttribute('fill',c); m.appendChild(p); defs.appendChild(m);
+  });
+  function pt(x,t,label,color,dx,dy){ add('circle',{cx:px(x),cy:py(t),r:6,fill:color,stroke:'#fff','stroke-width':'2'}); add('text',{x:px(x)+dx,y:py(t)+dy,'font-size':'13','font-weight':'700',fill:color},label+' ('+t+' °C; '+x+' g/kg)'); }
+  // L1 -> L2
+  add('line',{x1:px(10),y1:py(24),x2:px(5.3),y2:py(17.4),stroke:'#1d4ed8','stroke-width':'3','marker-end':'url(#ar0)'});
+  // Z3 -> Z4
+  add('line',{x1:px(5),y1:py(17),x2:px(5),y2:py(25.6),stroke:'#dc2626','stroke-width':'3','marker-end':'url(#ar1)'});
+  pt(10,24,'L1','#1d4ed8',10,-8);
+  pt(5,17,'L2 = Z3','#1d4ed8',10,18);
+  pt(5,26,'Z4','#dc2626',-58,-10);
+})();
+</script>
+</body>
+</html>
