@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELE.04 czerwiec 2026 – Pompa ciepła R410A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#f3f5f7;--sf:#ffffff;--sf2:#e9eef2;--ink:#1a2430;--ink2:#4a5866;--mut:#7a8794;--line:#d6dde4;
+--cold:#1f6f9f;--cold-bg:#e3eef6;--hot:#c2502b;--hot-bg:#f8e7df;--ok:#2b7a5a;--ok-bg:#e0f0e8;--warn:#a8641b;--warn-bg:#f7ecd9;
+--term:#1f6f9f;--pop-bg:#1a2430;--pop-ink:#f3f5f7;--shadow:0 6px 24px rgba(20,30,40,.14);}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111820;--sf:#1a232d;--sf2:#222d38;--ink:#e6ecf2;--ink2:#b3bfcb;--mut:#7f8c99;--line:#2e3a46;
+--cold:#6fb3dd;--cold-bg:#1a2e3d;--hot:#f08a63;--hot-bg:#3a241b;--ok:#6cc79c;--ok-bg:#1c332a;--warn:#e0a955;--warn-bg:#3a2d18;--term:#7cc0e8;--pop-bg:#f3f5f7;--pop-ink:#1a2430;--shadow:0 6px 24px rgba(0,0,0,.5);}}
+:root[data-theme="dark"]{--bg:#111820;--sf:#1a232d;--sf2:#222d38;--ink:#e6ecf2;--ink2:#b3bfcb;--mut:#7f8c99;--line:#2e3a46;
+--cold:#6fb3dd;--cold-bg:#1a2e3d;--hot:#f08a63;--hot-bg:#3a241b;--ok:#6cc79c;--ok-bg:#1c332a;--warn:#e0a955;--warn-bg:#3a2d18;--term:#7cc0e8;--pop-bg:#f3f5f7;--pop-ink:#1a2430;--shadow:0 6px 24px rgba(0,0,0,.5);}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.55;padding:0 16px 64px}
+h1,h2,h3,h4{font-family:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.7rem,4.5vw,2.6rem);font-weight:600;letter-spacing:-.01em}
+h2{font-size:clamp(1.35rem,3.2vw,1.8rem);font-weight:600}
+h3{font-size:1.15rem;font-weight:600;margin-block:22px 8px}
+p{margin:0 0 12px}
+code,.frm,.val,.num{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+sub,sup{font-size:.72em;line-height:0}
+.wrap{max-width:960px;margin:0 auto}
+.hd{padding-block:28px 14px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.eyebrow{font-size:.8rem;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);font-weight:500;margin-bottom:8px}
+.lead{color:var(--ink2);max-width:66ch;margin-top:10px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.fact{background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.fact .k{font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)}
+.fact .v{font-family:"IBM Plex Mono",monospace;font-size:1.15rem;font-weight:500;font-variant-numeric:tabular-nums}
+.nav{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin:0 -16px 24px;padding:10px 16px}
+.nav .in{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.nav a,.nav button{font:inherit;font-size:.92rem;min-height:40px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);background:var(--sf);color:var(--ink);text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.nav a b{font-family:"IBM Plex Mono",monospace;background:var(--cold);color:#fff;border-radius:999px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600}
+.nav a:hover,.nav button:hover{border-color:var(--cold)}
+.nav .sp{flex:1}
+.nav button.on{background:var(--cold);color:#fff;border-color:var(--cold)}
+.nav a:focus-visible,.nav button:focus-visible,.t:focus-visible,summary:focus-visible{outline:2px solid var(--cold);outline-offset:2px}
+.task{background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin-bottom:26px;scroll-margin-top:120px}
+.task>header{display:flex;gap:14px;align-items:flex-start;margin-bottom:10px}
+.task .no{flex:0 0 auto;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.9rem;color:var(--cold);background:var(--cold-bg);border-radius:8px;padding:4px 9px;margin-top:3px;white-space:nowrap}
+.task .tag{display:inline-block;font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-top:4px}
+.hidden{display:none!important}
+details{border:1px solid var(--line);border-radius:10px;background:var(--bg);margin:10px 0}
+details>summary{cursor:pointer;padding:12px 16px;font-weight:600;list-style:none;display:flex;align-items:center;gap:10px;min-height:44px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:9px;height:9px;border-right:2px solid var(--cold);border-bottom:2px solid var(--cold);transform:rotate(-45deg);transition:transform .2s;flex:0 0 auto}
+details[open]>summary::before{transform:rotate(45deg)}
+details>.body{padding:4px 16px 16px}
+.steps{counter-reset:s;padding-left:0;margin:0;list-style:none}
+.steps li{counter-increment:s;position:relative;padding-left:40px;margin-bottom:12px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:28px;height:28px;border-radius:50%;background:var(--cold);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center}
+.formula{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;background:var(--sf2);border-left:3px solid var(--cold);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;overflow-x:auto;font-size:1rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.note{border-left:3px solid var(--warn);background:var(--warn-bg);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.95rem}
+.note.ok{border-color:var(--ok);background:var(--ok-bg)}
+.note.cold{border-color:var(--cold);background:var(--cold-bg)}
+.tw{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.95rem}
+th{font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);text-align:left;padding:10px 12px;background:var(--sf2);font-weight:600}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+td.lp{color:var(--mut);font-family:"IBM Plex Mono",monospace;width:34px}
+td.val{font-family:"IBM Plex Mono",monospace;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ok)}
+td.un{color:var(--ink2);white-space:nowrap}
+td.frm{font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+td.num{text-align:right}
+td .sym{font-family:"IBM Plex Mono",monospace;font-weight:600;display:block}
+td .nm{color:var(--ink2);font-size:.9rem}
+tr.how td{border-top:none;padding-top:0;padding-bottom:12px;color:var(--ink2);font-size:.92rem}
+.howl{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cold);font-weight:600;margin-right:6px}
+.table-cap{font-size:.85rem;color:var(--mut);margin-bottom:4px;margin-top:14px}
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:14px 0}
+.cmp .c{background:var(--sf2);border-radius:10px;padding:12px 14px}
+.cmp .k{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+.cmp .v{font-family:"IBM Plex Mono",monospace;font-size:1.1rem;font-variant-numeric:tabular-nums;margin-top:2px}
+.cmp .v .a{color:var(--cold)} .cmp .v .b{color:var(--hot)}
+.cmp .d{font-size:.85rem;color:var(--ink2)}
+.proto{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--sf)}
+.proto ol{padding-left:22px;margin:0}
+.proto li{margin-bottom:10px}
+.proto ul{padding-left:18px;margin:6px 0}
+.pick{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:6px;padding:1px 8px;font-weight:600}
+.strike{text-decoration:line-through;color:var(--mut)}
+.why{color:var(--ink2);font-size:.92rem;display:block;margin-top:3px}
+.t{color:var(--term);border-bottom:1px dotted var(--term);cursor:help;text-decoration:none;padding-bottom:1px}
+.t::after{content:"?";display:inline-block;font-size:.62em;font-weight:700;vertical-align:super;margin-left:2px;opacity:.75}
+.t.open{background:var(--cold-bg);border-radius:3px}
+#pop{position:absolute;z-index:100;max-width:min(340px,calc(100vw - 32px));background:var(--pop-bg);color:var(--pop-ink);padding:12px 32px 12px 14px;border-radius:10px;box-shadow:var(--shadow);font-size:.92rem;line-height:1.45;display:none}
+#pop b{display:block;margin-bottom:4px;font-size:.98rem}
+#pop.show{display:block}
+#pop .x{position:absolute;top:6px;right:8px;border:0;background:none;color:inherit;font-size:1.3rem;cursor:pointer;line-height:1;padding:2px 6px}
+svg.chart,svg.schem{width:100%;height:auto;display:block;background:var(--sf);border:1px solid var(--line);border-radius:10px;font-family:"IBM Plex Sans",system-ui,sans-serif}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .ax{fill:var(--mut);font-size:11px;font-family:"IBM Plex Mono",monospace}
+.chart .axl{fill:var(--ink2);font-size:12px}
+.chart .dome{fill:none;stroke:var(--ink);stroke-width:2}
+.chart .iso{fill:none;stroke:var(--ink2);stroke-width:1;stroke-dasharray:4 3;opacity:.7}
+.chart .isoc{fill:none;stroke:var(--hot);stroke-width:1;stroke-dasharray:2 3;opacity:.7}
+.chart .lbl{font-size:11px;fill:var(--ink2)}
+.chart .lbl.nom{fill:var(--cold)} .chart .lbl.cold{fill:var(--hot)}
+.chart .iso-l{fill:var(--ink2)} .chart .isoc-l{fill:var(--hot)}
+.chart .dome-l{fill:var(--mut);font-style:italic}
+.chart .sub{font-size:8px;baseline-shift:sub}
+.chart .cyc{fill:none;stroke-width:2.5;stroke-linejoin:round}
+.chart .cyc.nom{stroke:var(--cold)} .chart .cyc.cold{stroke:var(--hot);stroke-dasharray:7 4}
+.chart .pt.nom{fill:var(--cold);stroke:var(--sf);stroke-width:1.5} .chart .pt.cold{fill:var(--hot);stroke:var(--sf);stroke-width:1.5}
+.chart .plab{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:13px}
+.chart .plab.nom{fill:var(--cold)} .chart .plab.cold{fill:var(--hot)}
+.chart .legbg{fill:var(--sf);stroke:var(--line);opacity:.95}
+.schem .pipe{fill:none;stroke:var(--ink);stroke-width:2.5}
+.schem .arrow{fill:var(--ink)}
+.schem .hx{fill:var(--sf);stroke:var(--ink);stroke-width:2.5}
+.schem .hxl{fill:none;stroke:var(--ink);stroke-width:1.5}
+.schem .hxfill{fill:var(--ink)}
+.schem .bulb{fill:none;stroke:var(--ink2);stroke-width:1.5;stroke-dasharray:5 4}
+.schem .sl{fill:var(--ink2);font-size:13px}
+.schem .sl.hot{fill:var(--hot)} .schem .sl.coldc{fill:var(--cold)}
+.schem .node circle{fill:var(--cold);stroke:var(--sf);stroke-width:2}
+.schem .node text{fill:var(--cold);font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:20px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.9rem;color:var(--ink2);margin-top:8px}
+.legend i{display:inline-block;width:22px;height:0;border-top:3px solid var(--cold);vertical-align:middle;margin-right:6px}
+.legend i.h{border-top-style:dashed;border-color:var(--hot)}
+.pts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:14px}
+.pts .p{background:var(--sf2);border-radius:10px;padding:12px 14px;display:flex;gap:12px}
+.pts .p b{flex:0 0 34px;height:34px;border-radius:50%;background:var(--cold);color:#fff;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace}
+.pts .p div{font-size:.93rem}
+.pts .p div span{display:block;color:var(--ink2);font-size:.88rem}
+.gloss{columns:2;column-gap:28px;padding-left:18px;font-size:.93rem}
+.gloss li{break-inside:avoid;margin-bottom:8px}
+footer{color:var(--mut);font-size:.85rem;margin-top:30px;max-width:70ch}
+@media (max-width:640px){.gloss{columns:1}.task{padding:18px 14px}.nav a,.nav button{font-size:.88rem;padding:6px 10px}table{min-width:520px}.task{scroll-margin-top:150px}}
+
+/* ułamki: licznik nad mianownikiem */
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .2em;line-height:1.2;font-variant-numeric:tabular-nums}
+.fr>.n{padding:0 .3em .1em;border-bottom:1.5px solid currentColor}
+.fr>.d{padding:.1em .3em 0}
+.formula .fr{margin:0 .3em}
+td.frm{white-space:normal;min-width:150px}
+td.frm .fr{margin:0 .15em}
+</style>
+</head>
+<body>
+<div id="pop" role="dialog" aria-live="polite"></div>
+<div class="wrap">
+<header class="hd">
+ <div class="eyebrow">Egzamin zawodowy · część praktyczna · ELE.04-01-26.06-SG · czerwiec 2026</div>
+ <h1>Pompa ciepła R410A na wykresie log p–i</h1>
+ <p class="lead">Rozwiązanie krok po kroku zadania 01 z kwalifikacji ELE.04 (<span class="t" data-k="sg" tabindex="0">wersja SG</span>): wyznaczenie mocy sprężarki i <span class="t" data-k="chwilowy" tabindex="0">chwilowego COP</span> pompy ciepła powietrze/woda dla warunków nominalnych <span class="t" data-k="a7w55" tabindex="0">A7/W55</span> oraz po spadku temperatury powietrza do −20 °C, wraz z protokołem i rekomendacją dla inwestora.</p>
+ <div class="facts">
+  <div class="fact"><div class="k">czynnik</div><div class="v"><span class="t" data-k="r410a" tabindex="0">R410A</span></div></div>
+  <div class="fact"><div class="k">moc grzewcza Q̇<sub>k</sub></div><div class="v">10 kW</div></div>
+  <div class="fact"><div class="k">warunki nominalne</div><div class="v">A7 / W55</div></div>
+  <div class="fact"><div class="k">obiecany COP</div><div class="v">≥ 4,0</div></div>
+  <div class="fact"><div class="k">czas</div><div class="v">180 min</div></div>
+ </div>
+</header>
+
+<nav class="nav" aria-label="Szybka nawigacja"><div class="in">
+ <a href="#z0" data-for="z0"><b>0</b> Treść</a>
+ <a href="#z1" data-for="z1"><b>1</b> Schemat</a>
+ <a href="#z2" data-for="z2"><b>2</b> Wykres</a>
+ <a href="#z3" data-for="z3"><b>3</b> Tabela 3</a>
+ <a href="#z4" data-for="z4"><b>4</b> Tabela 4</a>
+ <a href="#z5" data-for="z5"><b>5</b> Protokół</a>
+ <a href="#gl" data-for="gl"><b>?</b> Słowniczek</a>
+ <span class="sp"></span>
+ <button id="btn-calc" type="button" aria-pressed="false">Tylko obliczenia</button>
+ <button id="btn-all" type="button">Rozwiń wszystkie rozwiązania</button>
+</div></nav>
+
+<!-- ============ 0. TREŚĆ ============ -->
+<section class="task" id="z0">
+ <header><span class="no">0</span><div><h2>Treść zadania i dane wyjściowe</h2><span class="tag">co mamy, co liczymy</span></div></header>
+ <p>W budynku jednorodzinnym zaplanowano pompę ciepła powietrze/woda o parametrach nominalnych <span class="t" data-k="a7w55" tabindex="0">A7/W55</span> i mocy grzewczej <span class="t" data-k="qkdot" tabindex="0">Q̇k</span> = 10 kW, zasilającą <span class="t" data-k="co" tabindex="0">c.o.</span> i <span class="t" data-k="cwu" tabindex="0">c.w.u.</span>. Przedstawiciel producenta zapewnia, że w polskim klimacie <span class="t" data-k="cop" tabindex="0">COP</span> w trybie grzania będzie nie mniejszy niż 4,0. Zadanie polega na sprawdzeniu tej obietnicy: najpierw dla warunków nominalnych (+7 °C), potem dla mrozu (−20 °C).</p>
+ <details open><summary>Dane – Tabela 1 (powietrze +7 °C) i Tabela 2 (powietrze −20 °C)</summary><div class="body">
+ <div class="tw"><table>
+  <thead><tr><th>Parametr</th><th>+7 °C (tab. 1)</th><th>−20 °C (tab. 2)</th><th>Jedn.</th></tr></thead>
+  <tbody>
+  <tr><td>temperatura powietrza przed <span class="t" data-k="parownik" tabindex="0">parownikiem</span></td><td class="num">7</td><td class="num">−20</td><td>°C</td></tr>
+  <tr><td>temperatura parowania t<sub>0</sub></td><td class="num">2</td><td class="num">−28 *</td><td>°C</td></tr>
+  <tr><td><span class="t" data-k="przegrzanie" tabindex="0">przegrzanie pary</span> ΔT<sub>p</sub></td><td class="num">8</td><td class="num">8</td><td><span class="t" data-k="kelwin" tabindex="0">K</span></td></tr>
+  <tr><td>temperatura na ssaniu sprężarki t<sub>ss</sub></td><td class="num">10</td><td class="num">−20</td><td>°C</td></tr>
+  <tr><td>temperatura wody na odpływie ze <span class="t" data-k="skraplacz" tabindex="0">skraplacza</span></td><td class="num">55</td><td class="num">55</td><td>°C</td></tr>
+  <tr><td>temperatura skraplania t<sub>k</sub></td><td class="num">60</td><td class="num">60</td><td>°C</td></tr>
+  <tr><td><span class="t" data-k="dochlodzenie" tabindex="0">dochłodzenie cieczy</span> ΔT<sub>d</sub></td><td class="num">20</td><td class="num">20</td><td>K</td></tr>
+  <tr><td>temperatura cieczy za skraplaczem t<sub>d</sub></td><td class="num">40</td><td class="num">40</td><td>°C</td></tr>
+  </tbody></table></div>
+ <p class="note">* Różnica między temperaturą powietrza a temperaturą parowania rośnie z 5 K do 8 K, bo poniżej 0 °C parownik ulega <span class="t" data-k="oszronienie" tabindex="0">oszronieniu</span> – rośnie opór cieplny i czynnik musi parować chłodniej.</p>
+ </div></details>
+ <details><summary>Szukane – pięć ocenianych rezultatów</summary><div class="body">
+ <ol class="steps">
+  <li><b>Rysunek 2</b> – numeracja punktów 1–6 na schemacie ideowym pompy.</li>
+  <li><b>Rysunek 1</b> – nowy obieg 1'–6' narysowany na wykresie log p–i dla −20 °C.</li>
+  <li><b>Tabela 3</b> – odczyty entalpii, objętości właściwej, t<sub>3</sub>, p<sub>k</sub>, p<sub>0</sub> dla obu obiegów.</li>
+  <li><b>Tabela 4</b> – obliczenia: q<sub>0</sub>, q<sub>k</sub>, q<sub>v</sub>, l<sub>t</sub>, ṁ, V̇, N<sub>t</sub>, COP dla obu obiegów.</li>
+  <li><b>Protokół</b> – ocena wpływu temperatury i rekomendacja dla inwestora.</li>
+ </ol>
+ <p class="note cold">Strategia egzaminacyjna: rezultaty 3 → 4 → 5 zależą od siebie łańcuchowo. Najpierw starannie odczytaj wykres – każdy błąd odczytu przenosi się na wszystkie obliczenia. Egzaminator ocenia jednak przede wszystkim <em>metodę</em> i mieści się w tolerancji odczytu, więc wartość różniąca się o jedną działkę (5 kJ/kg) nie przekreśla pracy.</p>
+ </div></details>
+</section>
+
+<!-- ============ 1. SCHEMAT ============ -->
+<section class="task" id="z1">
+ <header><span class="no">Rezultat 1</span><div><h2>Punkty charakterystyczne na schemacie ideowym (Rysunek 2)</h2><span class="tag">gdzie w instalacji jest który punkt obiegu</span></div></header>
+ <p>Numer punktu wpisujemy przy każdej linii odniesienia zgodnie z kierunkiem przepływu czynnika: <span class="t" data-k="parownik" tabindex="0">parownik PAR</span> → <span class="t" data-k="sprezarka" tabindex="0">sprężarka SPR</span> → <span class="t" data-k="skraplacz" tabindex="0">skraplacz SKR</span> → <span class="t" data-k="tzr" tabindex="0">TZR</span> → parownik.</p>
+ <svg class="schem" viewBox="0 0 640 400" role="img" aria-label="Schemat ideowy pompy ciepła z numeracją punktów 1–6">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="arrow"/></marker></defs>
+<path class="pipe" d="M470 70 L400 70" marker-end="url(#ar)"/>
+<path class="pipe" d="M240 70 L120 70" marker-end="url(#ar)"/>
+<path class="pipe" d="M120 70 L120 150" marker-end="url(#ar)"/>
+<path class="pipe" d="M120 190 L120 320" marker-end="url(#ar)"/>
+<path class="pipe" d="M120 320 L240 320" marker-end="url(#ar)"/>
+<path class="pipe" d="M400 320 L470 320" marker-end="url(#ar)"/>
+<path class="pipe" d="M470 320 L470 230" marker-end="url(#ar)"/>
+<path class="pipe" d="M470 170 L470 70" marker-end="url(#ar)"/>
+<rect class="hx" x="240" y="40" width="160" height="60"/><path class="hxl" d="M240 40 L400 100 M240 100 L400 40"/>
+<text class="sl" x="320" y="128" text-anchor="middle">SKR – skraplacz</text>
+<text class="sl hot" x="320" y="26" text-anchor="middle">→ woda c.o./c.w.u. 55 °C</text>
+<rect class="hx" x="240" y="290" width="160" height="60"/><path class="hxl" d="M240 290 L400 350 M240 350 L400 290"/>
+<text class="sl" x="320" y="378" text-anchor="middle">PAR – parownik</text>
+<text class="sl coldc" x="320" y="276" text-anchor="middle">← powietrze zewn. +7 °C / −20 °C</text>
+<circle class="hx" cx="120" cy="170" r="20"/><path class="hxl" d="M106 156 L134 184 M106 184 L134 156"/>
+<path class="bulb" d="M140 170 L330 170 L330 306" /><rect class="hxfill" x="322" y="304" width="16" height="6"/>
+<text class="sl" x="60" y="175" text-anchor="middle">TZR</text>
+<circle class="hx" cx="470" cy="200" r="30"/><path class="hxl" d="M458 172 L448 228 M482 172 L492 228"/>
+<text class="sl" x="530" y="205" text-anchor="start">SPR – sprężarka</text>
+<g class="node"><circle cx="470" cy="70" r="6"/><text x="490" y="60">3</text></g>
+<g class="node"><circle cx="360" cy="70" r="6"/><text x="365" y="60">4</text></g>
+<g class="node"><circle cx="120" cy="70" r="6"/><text x="96" y="60">5</text></g>
+<g class="node"><circle cx="120" cy="320" r="6"/><text x="96" y="345">6</text></g>
+<g class="node"><circle cx="385" cy="320" r="6"/><text x="372" y="345">1</text></g>
+<g class="node"><circle cx="470" cy="320" r="6"/><text x="490" y="345">2</text></g>
+</svg>
+ <div class="pts">
+  <div class="p"><b>1</b><div>wewnątrz parownika, koniec parowania<span><span class="t" data-k="paranas" tabindex="0">para nasycona sucha</span>, t<sub>0</sub> = 2 °C, p<sub>0</sub></span></div></div>
+  <div class="p"><b>2</b><div>wylot z parownika / ssanie sprężarki (za czujnikiem TZR)<span><span class="t" data-k="paraprzeg" tabindex="0">para przegrzana</span>, t<sub>ss</sub> = 10 °C</span></div></div>
+  <div class="p"><b>3</b><div>tłoczenie sprężarki / wlot do skraplacza<span>para przegrzana, t<sub>3</sub> ≈ 90 °C, p<sub>k</sub></span></div></div>
+  <div class="p"><b>4</b><div>wewnątrz skraplacza, koniec skraplania<span><span class="t" data-k="ciecznas" tabindex="0">ciecz nasycona</span>, t<sub>k</sub> = 60 °C</span></div></div>
+  <div class="p"><b>5</b><div>wylot ze skraplacza / wlot do TZR<span>ciecz dochłodzona, t<sub>d</sub> = 40 °C</span></div></div>
+  <div class="p"><b>6</b><div>wylot z TZR / wlot do parownika<span>para mokra po <span class="t" data-k="dlawienie" tabindex="0">dławieniu</span>, p<sub>0</sub>, t<sub>0</sub> = 2 °C</span></div></div>
+ </div>
+ <details><summary>Jak to uzasadnić – rozumowanie krok po kroku</summary><div class="body">
+ <ol class="steps">
+  <li>Znajdź sprężarkę (koło z dwiema liniami). Strzałki pokazują, że czynnik płynie do niej z dołu (z parownika) i wychodzi górą (do skraplacza). Węzeł <b>przed</b> sprężarką to <b>2</b>, <b>za</b> nią – <b>3</b>.</li>
+  <li>Skraplacz (u góry) jest przepływany od prawej do lewej. Kropka <b>wewnątrz</b> skraplacza to miejsce, gdzie ostatnia porcja pary się skropliła – <b>4</b>; dalej ciecz się tylko dochładza aż do wylotu – <b>5</b>.</li>
+  <li>Za skraplaczem ciecz wpływa do zaworu TZR (koło z krzyżem). Przed nim panuje p<sub>k</sub> (punkt 5), za nim p<sub>0</sub> – <b>6</b>.</li>
+  <li>W parowniku (na dole, przepływ od lewej do prawej) ciecz wrze; kropka <b>wewnątrz</b> parownika przy wylocie to koniec wrzenia – <b>1</b>; na wylocie, tuż za czujnikiem (bańką) TZR mierzącym przegrzanie, mamy <b>2</b>.</li>
+ </ol>
+ <p class="note">Typowy błąd: zamiana 1↔2 lub 4↔5. Punkt na krzywej granicznej (1 i 4) zawsze leży <em>wewnątrz</em> wymiennika, a punkt na wylocie (2 i 5) jest już przegrzany lub dochłodzony.</p>
+ </div></details>
+</section>
+
+<!-- ============ 2. WYKRES ============ -->
+<section class="task" id="z2">
+ <header><span class="no">Rezultat 2</span><div><h2>Nowy obieg 1'–6' na wykresie log p–i (Rysunek 1)</h2><span class="tag">rysowanie przemian dla −20 °C</span></div></header>
+ <p>Na <span class="t" data-k="logpi" tabindex="0">wykresie log p–i</span> obieg nominalny (w arkuszu narysowany na różowo) to czworobok 1-2-3-4-5-6. Przy −20 °C zmienia się tylko dolna <span class="t" data-k="izobara" tabindex="0">izobara</span> – górna (skraplanie przy 60 °C) zostaje. Poniżej odtworzony wykres z oboma obiegami; kształt krzywej granicznej R410A i linie pomocnicze odpowiadają danym tablicowym czynnika.</p>
+ <svg class="chart" viewBox="0 0 760 470" role="img" aria-label="Wykres log p–i dla R410A z obiegiem nominalnym i obiegiem przy −20 °C">
+<line class="grid" x1="58.0" y1="18" x2="58.0" y2="424"/>
+<text class="ax" x="58.0" y="440" text-anchor="middle">240</text>
+<line class="grid" x1="149.2" y1="18" x2="149.2" y2="424"/>
+<text class="ax" x="149.2" y="440" text-anchor="middle">280</text>
+<line class="grid" x1="240.4" y1="18" x2="240.4" y2="424"/>
+<text class="ax" x="240.4" y="440" text-anchor="middle">320</text>
+<line class="grid" x1="331.6" y1="18" x2="331.6" y2="424"/>
+<text class="ax" x="331.6" y="440" text-anchor="middle">360</text>
+<line class="grid" x1="422.8" y1="18" x2="422.8" y2="424"/>
+<text class="ax" x="422.8" y="440" text-anchor="middle">400</text>
+<line class="grid" x1="514.0" y1="18" x2="514.0" y2="424"/>
+<text class="ax" x="514.0" y="440" text-anchor="middle">440</text>
+<line class="grid" x1="605.2" y1="18" x2="605.2" y2="424"/>
+<text class="ax" x="605.2" y="440" text-anchor="middle">480</text>
+<line class="grid" x1="696.4" y1="18" x2="696.4" y2="424"/>
+<text class="ax" x="696.4" y="440" text-anchor="middle">520</text>
+<line class="grid" x1="58" y1="424.0" x2="742" y2="424.0"/>
+<text class="ax" x="52" y="428.0" text-anchor="end">2</text>
+<line class="grid" x1="58" y1="372.9" x2="742" y2="372.9"/>
+<text class="ax" x="52" y="376.9" text-anchor="end">3</text>
+<line class="grid" x1="58" y1="336.6" x2="742" y2="336.6"/>
+<text class="ax" x="52" y="340.6" text-anchor="end">4</text>
+<line class="grid" x1="58" y1="308.4" x2="742" y2="308.4"/>
+<text class="ax" x="52" y="312.4" text-anchor="end">5</text>
+<line class="grid" x1="58" y1="285.4" x2="742" y2="285.4"/>
+<text class="ax" x="52" y="289.4" text-anchor="end">6</text>
+<line class="grid" x1="58" y1="249.1" x2="742" y2="249.1"/>
+<text class="ax" x="52" y="253.1" text-anchor="end">8</text>
+<line class="grid" x1="58" y1="221.0" x2="742" y2="221.0"/>
+<text class="ax" x="52" y="225.0" text-anchor="end">10</text>
+<line class="grid" x1="58" y1="169.9" x2="742" y2="169.9"/>
+<text class="ax" x="52" y="173.9" text-anchor="end">15</text>
+<line class="grid" x1="58" y1="133.6" x2="742" y2="133.6"/>
+<text class="ax" x="52" y="137.6" text-anchor="end">20</text>
+<line class="grid" x1="58" y1="82.4" x2="742" y2="82.4"/>
+<text class="ax" x="52" y="86.4" text-anchor="end">30</text>
+<line class="grid" x1="58" y1="46.1" x2="742" y2="46.1"/>
+<text class="ax" x="52" y="50.1" text-anchor="end">40</text>
+<line class="grid" x1="58" y1="18.0" x2="742" y2="18.0"/>
+<text class="ax" x="52" y="22.0" text-anchor="end">50</text>
+<text class="axl" x="400.0" y="462" text-anchor="middle">entalpia właściwa i [kJ/kg]</text>
+<text class="axl" transform="translate(14 221.0) rotate(-90)" text-anchor="middle">ciśnienie p [bar] (skala log)</text>
+<path class="dome" d="M 61.5 153.9 L 65.4 150.6 L 69.2 147.3 L 73.2 144.0 L 77.1 140.8 L 81.1 137.5 L 85.1 134.3 L 89.1 131.1 L 93.1 127.9 L 97.2 124.8 L 101.3 121.6 L 105.4 118.5 L 109.6 115.4 L 113.8 112.3 L 118.0 109.2 L 122.3 106.2 L 126.6 103.2 L 130.9 100.1 L 135.3 97.1 L 139.7 94.2 L 144.2 91.2 L 148.7 88.2 L 153.3 85.3 L 157.9 82.4 L 162.6 79.5 L 167.4 76.6 L 172.2 73.7 L 177.1 70.9 L 182.0 68.0 L 187.1 65.2 L 192.3 62.4 L 197.5 59.5 L 202.9 56.8 L 208.5 54.0 L 214.1 51.2 L 220.0 48.5 L 226.1 45.7 L 232.4 43.0 L 239.0 40.2 L 246.1 37.5 L 253.6 34.8 L 261.8 32.1 L 271.0 29.5 L 281.8 26.8 L 295.9 24.1 L 396.3 24.1 L 408.5 26.8 L 417.5 29.5 L 424.6 32.1 L 430.6 34.8 L 435.8 37.5 L 440.3 40.2 L 444.3 43.0 L 447.9 45.7 L 451.1 48.5 L 454.0 51.2 L 456.7 54.0 L 459.1 56.8 L 461.4 59.5 L 463.4 62.4 L 465.3 65.2 L 467.1 68.0 L 468.7 70.9 L 470.1 73.7 L 471.5 76.6 L 472.8 79.5 L 473.9 82.4 L 475.0 85.3 L 476.0 88.2 L 476.9 91.2 L 477.7 94.2 L 478.5 97.1 L 479.1 100.1 L 479.8 103.2 L 480.3 106.2 L 480.8 109.2 L 481.3 112.3 L 481.7 115.4 L 482.0 118.5 L 482.3 121.6 L 482.5 124.8 L 482.7 127.9 L 482.9 131.1 L 483.0 134.3 L 483.1 137.5 L 483.1 140.8 L 483.1 144.0 L 483.1 147.3 L 483.0 150.6 L 482.9 153.9 L 482.8 157.3 L 482.6 160.7 L 482.4 164.0 L 482.2 167.5 L 482.0 170.9 L 481.7 174.4 L 481.4 177.8 L 481.1 181.3 L 480.7 184.9 L 480.4 188.4 L 480.0 192.0 L 479.5 195.6 L 479.1 199.3 L 478.6 202.9 L 478.1 206.6 L 477.6 210.3 L 477.1 214.1 L 476.6 217.8 L 476.0 221.6 L 475.4 225.5 L 474.8 229.3 L 474.2 233.2 L 473.6 237.1 L 472.9 241.1 L 472.2 245.0 L 471.6 249.0 L 470.9 253.1 L 470.2 257.1 L 469.4 261.2 L 468.7 265.4 L 467.9 269.5 L 467.2 273.7 L 466.4 278.0 L 465.6 282.2 L 464.8 286.5 L 463.9 290.9 L 463.1 295.3 L 462.2 299.7 L 461.4 304.1 L 460.5 308.6 L 459.6 313.1 L 458.7 317.7 L 457.8 322.3 L 456.9 326.9 L 456.0 331.6 L 455.0 336.4 L 454.1 341.1 L 453.1 345.9 L 452.2 350.8 L 451.2 355.7 L 450.2 360.6 L 449.2 365.6 L 448.2 370.6 L 447.2 375.7 L 446.2 380.8 L 445.1 386.0 L 444.1 391.2 L 443.1 396.5 L 442.0 401.8 L 440.9 407.2 L 439.9 412.6 L 438.8 418.1 L 437.7 423.6"/>
+<text class="lbl dome-l" x="172.0" y="285.4">ciecz nasycona (x=0)</text>
+<text class="lbl dome-l" x="495.8" y="285.4">para nasycona sucha (x=1)</text>
+<path class="iso" d="M 684.5 395.9 L 683.4 372.9 L 681.2 336.6 L 678.9 308.4 L 676.7 285.4 L 672.1 249.1 L 667.4 221.0 L 662.7 198.0 L 655.3 169.9 L 642.5 133.6 L 628.9 105.4 L 614.3 82.4 L 598.4 63.0 L 586.4 51.0 L 573.5 40.0 L 557.4 28.5"/>
+<text class="lbl iso-l" x="681.7" y="289.4">t = 90 °C</text>
+<path class="iso" d="M 727.2 395.9 L 726.2 372.9 L 724.3 336.6 L 722.4 308.4 L 720.4 285.4 L 716.5 249.1 L 712.5 221.0 L 708.4 198.0 L 702.2 169.9 L 691.5 133.6 L 680.4 105.4 L 668.7 82.4 L 656.4 63.0 L 647.5 51.0 L 638.1 40.0 L 627.0 28.5"/>
+<text class="lbl iso-l" x="673.7" y="86.4">t = 110 °C</text>
+<path class="isoc" d="M 429.9 249.1 L 487.0 234.3 L 531.4 221.0 L 625.5 198.0 L 727.7 178.6"/>
+<text class="lbl isoc-l" x="721.7" y="172.6" text-anchor="end">v = 0.030 m³/kg</text>
+<path class="isoc" d="M 466.7 372.9 L 533.5 353.4 L 605.0 336.6"/>
+<text class="lbl isoc-l" x="609.0" y="334.6">v = 0.090 m³/kg</text>
+<path class="cyc nom" d="M 115.0 241.5 L 468.4 241.5 L 491.2 241.5 L 582.4 51.0 L 206.2 51.0 L 115.0 51.0 Z"/>
+<circle class="pt nom" cx="115.0" cy="241.5" r="4.5"/>
+<circle class="pt nom" cx="468.4" cy="241.5" r="4.5"/>
+<circle class="pt nom" cx="491.2" cy="241.5" r="4.5"/>
+<circle class="pt nom" cx="582.4" cy="51.0" r="4.5"/>
+<circle class="pt nom" cx="206.2" cy="51.0" r="4.5"/>
+<circle class="pt nom" cx="115.0" cy="51.0" r="4.5"/>
+<path class="cyc cold" d="M 115.0 377.1 L 445.6 377.1 L 468.4 377.1 L 639.4 51.0 L 206.2 51.0 L 115.0 51.0 Z"/>
+<circle class="pt cold" cx="115.0" cy="377.1" r="4.5"/>
+<circle class="pt cold" cx="445.6" cy="377.1" r="4.5"/>
+<circle class="pt cold" cx="468.4" cy="377.1" r="4.5"/>
+<circle class="pt cold" cx="639.4" cy="51.0" r="4.5"/>
+<circle class="pt cold" cx="206.2" cy="51.0" r="4.5"/>
+<circle class="pt cold" cx="115.0" cy="51.0" r="4.5"/>
+<text class="plab nom" x="107.0" y="257.5" text-anchor="middle">6</text>
+<text class="plab nom" x="458.4" y="258.5" text-anchor="middle">1</text>
+<text class="plab nom" x="501.2" y="258.5" text-anchor="middle">2</text>
+<text class="plab nom" x="590.4" y="45.0" text-anchor="middle">3</text>
+<text class="plab nom" x="202.2" y="43.0" text-anchor="middle">4</text>
+<text class="plab nom" x="101.0" y="45.0" text-anchor="middle">5</text>
+<text class="plab cold" x="105.0" y="393.1" text-anchor="middle">6'</text>
+<text class="plab cold" x="435.6" y="394.1" text-anchor="middle">1'</text>
+<text class="plab cold" x="480.4" y="394.1" text-anchor="middle">2'</text>
+<text class="plab cold" x="649.4" y="45.0" text-anchor="middle">3'</text>
+<text class="plab cold" x="210.2" y="67.0" text-anchor="middle">4'</text>
+<text class="plab cold" x="101.0" y="67.0" text-anchor="middle">5'</text>
+<text class="lbl nom" x="395.4" y="44.0" text-anchor="middle">p<tspan class="sub">k</tspan> = 38,5 bar (t<tspan class="sub">k</tspan> = 60 °C)</text>
+<text class="lbl nom" x="290.6" y="234.5" text-anchor="middle">p<tspan class="sub">0</tspan> = 8,5 bar (t<tspan class="sub">0</tspan> = 2 °C)</text>
+<text class="lbl cold" x="279.2" y="370.1" text-anchor="middle">p<tspan class="sub">0</tspan>' = 3,0 bar (t<tspan class="sub">0</tspan>' = −28 °C)</text>
+<rect class="legbg" x="62" y="370" width="215" height="44" rx="4"/>
+<line class="cyc nom" x1="68" y1="382" x2="96" y2="382"/><text class="lbl" x="102" y="386">obieg nominalny, t<tspan class="sub">z</tspan> = +7 °C</text>
+<line class="cyc cold" x1="68" y1="400" x2="96" y2="400"/><text class="lbl" x="102" y="404">obieg przy t<tspan class="sub">z</tspan> = −20 °C</text>
+</svg>
+ <div class="legend"><span><i></i>obieg nominalny, +7 °C (punkty 1–6)</span><span><i class="h"></i>obieg przy −20 °C (punkty 1'–6')</span><span>— — izotermy 90 °C i 110 °C</span><span style="color:var(--hot)">· · · izochory 0,030 i 0,090 m³/kg</span></div>
+ <details><summary>Jak narysować obieg 1'–6' – krok po kroku</summary><div class="body">
+ <ol class="steps">
+  <li><b>Nowa izobara parowania.</b> Znajdź na krzywej granicznej <span class="t" data-k="izoterma" tabindex="0">izotermę</span> −28 °C (w obszarze pary mokrej izotermy są poziome). Poprowadź poziomą linię – to <span class="t" data-k="p0" tabindex="0">p0'</span> ≈ 3,0 bar. Leży wyraźnie niżej niż linia 8,5 bar obiegu nominalnego.</li>
+  <li><b>Punkt 6'.</b> Przedłuż pionową linię dławienia 5→6 w dół aż do nowej izobary (i<sub>6'</sub> = i<sub>5</sub> = 265 kJ/kg). Punkty 5' i 4' pokrywają się z 5 i 4 – po stronie skraplacza nic się nie zmieniło.</li>
+  <li><b>Punkt 1'.</b> Przecięcie izobary 3,0 bar z prawą krzywą graniczną (x = 1): i<sub>1'</sub> ≈ 410 kJ/kg.</li>
+  <li><b>Punkt 2'.</b> Od 1' idź po izobarze w prawo do izotermy −20 °C (przegrzanie 8 K): i<sub>2'</sub> ≈ 420 kJ/kg. Odcinek przegrzania 1'–2' jest krótki – przy niskim ciśnieniu izotermy pary przegrzanej są bardzo strome.</li>
+  <li><b>Punkt 3'.</b> Z punktu 2' poprowadź linię <em>równolegle do najbliższej niebieskiej <span class="t" data-k="izentropa" tabindex="0">izentropy</span></em> (s ≈ 1,90 kJ/(kg·K)) aż do górnej izobary p<sub>k</sub> = 38,5 bar. Trafiasz w i<sub>3'</sub> ≈ 495 kJ/kg, na izotermie ≈ 110 °C. Sprężanie jest teraz dłuższe i bardziej pochylone – stosunek ciśnień p<sub>k</sub>/p<sub>0</sub> wzrósł z ok. 4,5 do ok. 13.</li>
+  <li><b>Zamknij obieg</b> odcinkiem 3'→4'→5' po izobarze skraplania i oznacz wszystkie punkty primami (1'…6'). Na egzaminie rysuj innym kolorem lub linią przerywaną, żeby egzaminator odróżnił oba obiegi.</li>
+ </ol>
+ <p class="note ok">Kontrola poprawności rysunku: obieg 1'–6' powinien być <em>wyższy</em> (większa różnica ciśnień) i <em>węższy u dołu</em> (q<sub>0</sub>' &lt; q<sub>0</sub>), a punkt 3' powinien leżeć na prawo od 3 i na wyższej izotermie.</p>
+ </div></details>
+</section>
+
+<!-- ============ 3. TABELA 3 ============ -->
+<section class="task" id="z3" data-calc>
+ <header><span class="no">Rezultat 3</span><div><h2>Tabela 3 – parametry w punktach charakterystycznych</h2><span class="tag">odczyty z wykresu z zadaną dokładnością</span></div></header>
+ <p>Odczytujemy z wykresu: <span class="t" data-k="entalpia" tabindex="0">entalpię</span> z dokładnością 5 kJ/kg, <span class="t" data-k="objwl" tabindex="0">objętość właściwą</span> z dokładnością 0,005 m³/kg (zapis do 3 miejsc), temperaturę co 5 °C, <span class="t" data-k="pk" tabindex="0">ciśnienie skraplania</span> co 5 <span class="t" data-k="bar" tabindex="0">bar</span> i <span class="t" data-k="p0" tabindex="0">ciśnienie parowania</span> co 0,5 bar.</p>
+ <p class="table-cap">A. Temperatura powietrza zewnętrznego t = 7 °C</p>
+ <div class="tw"><table><thead><tr><th>Lp.</th><th>Parametr</th><th>Wartość</th><th>Jedn.</th></tr></thead><tbody><tr><td class="lp">1</td><td><span class="sym">i<sub>1</sub></span><span class="nm">entalpia w punkcie 1 (para nasycona sucha, t<sub>0</sub> = 2 °C)</span></td><td class="val">420</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Punkt 1 leży na przecięciu izobary p<sub>0</sub> = 8,5 bar z prawą krzywą graniczną (x = 1). Rzut na oś entalpii ≈ 421 → z dokładnością 5 kJ/kg: <b>420</b>.</td></tr>
+<tr><td class="lp">2</td><td><span class="sym">i<sub>2</sub></span><span class="nm">entalpia w punkcie 2 (para przegrzana, t<sub>ss</sub> = 10 °C)</span></td><td class="val">430</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Od punktu 1 idziemy po izobarze w prawo, aż do izotermy 10 °C (2 °C + 8 K przegrzania). Odczyt ≈ 431 → <b>430</b>.</td></tr>
+<tr><td class="lp">3</td><td><span class="sym">i<sub>3</sub></span><span class="nm">entalpia w punkcie 3 (koniec sprężania izentropowego)</span></td><td class="val">470</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Z punktu 2 wzdłuż izentropy (s ≈ 1,84 kJ/(kg·K), równolegle do niebieskich linii) do izobary p<sub>k</sub> = 38,5 bar. Odczyt ≈ 471 → <b>470</b> (dopuszczalne 475).</td></tr>
+<tr><td class="lp">4</td><td><span class="sym">i<sub>4</sub></span><span class="nm">entalpia w punkcie 4 (ciecz nasycona, t<sub>k</sub> = 60 °C)</span></td><td class="val">305</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Przecięcie izobary p<sub>k</sub> z lewą krzywą graniczną (x = 0). Odczyt ≈ 306 → <b>305</b>.</td></tr>
+<tr><td class="lp">5</td><td><span class="sym">i<sub>5</sub></span><span class="nm">entalpia w punkcie 5 (ciecz dochłodzona, t<sub>d</sub> = 40 °C)</span></td><td class="val">265</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Od punktu 4 w lewo po izobarze do izotermy 40 °C (60 °C − 20 K). Odczyt ≈ 265 → <b>265</b>.</td></tr>
+<tr><td class="lp">6</td><td><span class="sym">i<sub>6</sub></span><span class="nm">entalpia w punkcie 6 (po dławieniu w TZR)</span></td><td class="val">265</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Dławienie jest izentalpowe: i<sub>6</sub> = i<sub>5</sub> = <b>265</b> (pionowa linia 5→6).</td></tr>
+<tr><td class="lp">7</td><td><span class="sym">v<sub>ss</sub> = v<sub>2</sub></span><span class="nm">objętość właściwa na ssaniu sprężarki</span></td><td class="val">0,030</td><td class="un">m³/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Punkt 2 leży tuż na prawo od czerwonej izochory 0,030 (następna to 0,040). Interpolacja daje ≈ 0,032 → z dokładnością 0,005: <b>0,030</b>.</td></tr>
+<tr><td class="lp">8</td><td><span class="sym">t<sub>3</sub></span><span class="nm">temperatura na końcu sprężania</span></td><td class="val">90</td><td class="un">°C</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Izoterma przechodząca przez punkt 3 – pomiędzy 85 a 95 °C, tablicowo ≈ 92 °C → z dokładnością 5 °C: <b>90</b> (dopuszczalne 95).</td></tr>
+<tr><td class="lp">9</td><td><span class="sym">p<sub>k</sub></span><span class="nm">ciśnienie skraplania</span></td><td class="val">40</td><td class="un">bar</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Izobara przez punkty 3-4-5 leży nieco poniżej linii 40 bar (dokładnie ≈ 38,5 bar) → z dokładnością 5 bar: <b>40</b>.</td></tr>
+<tr><td class="lp">10</td><td><span class="sym">p<sub>0</sub></span><span class="nm">ciśnienie parowania</span></td><td class="val">8,5</td><td class="un">bar</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Izobara przez punkty 6-1-2 leży między liniami 8,0 i 9,0 bar (≈ 8,5) → z dokładnością 0,5 bar: <b>8,5</b>.</td></tr></tbody></table></div>
+ <p class="table-cap">B. Temperatura powietrza zewnętrznego t = −20 °C</p>
+ <div class="tw"><table><thead><tr><th>Lp.</th><th>Parametr</th><th>Wartość</th><th>Jedn.</th></tr></thead><tbody><tr><td class="lp">11</td><td><span class="sym">i<sub>1'</sub></span><span class="nm">entalpia w punkcie 1' (para nasycona sucha, t<sub>0</sub>' = −28 °C)</span></td><td class="val">410</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Nowa izobara p<sub>0</sub>' ≈ 3 bar przecina prawą krzywą graniczną przy ≈ 411 → <b>410</b>. Dla R410A entalpia pary nasyconej maleje wraz ze spadkiem temperatury.</td></tr>
+<tr><td class="lp">12</td><td><span class="sym">i<sub>2'</sub></span><span class="nm">entalpia w punkcie 2' (para przegrzana, t<sub>p</sub>' = −20 °C)</span></td><td class="val">420</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Po izobarze w prawo do izotermy −20 °C (−28 °C + 8 K). Odczyt ≈ 418 → <b>420</b>.</td></tr>
+<tr><td class="lp">13</td><td><span class="sym">i<sub>3'</sub></span><span class="nm">entalpia w punkcie 3' (koniec sprężania)</span></td><td class="val">495</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Z 2' wzdłuż izentropy (s ≈ 1,90 kJ/(kg·K) – dalej na prawo niż w obiegu nominalnym) aż do p<sub>k</sub> = 38,5 bar. Odczyt ≈ 496 → <b>495</b> (dopuszczalne 500).</td></tr>
+<tr><td class="lp">14</td><td><span class="sym">i<sub>4'</sub></span><span class="nm">entalpia w punkcie 4'</span></td><td class="val">305</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Warunki po stronie skraplacza się nie zmieniły (t<sub>k</sub> = 60 °C) → punkt 4' = 4: <b>305</b>.</td></tr>
+<tr><td class="lp">15</td><td><span class="sym">i<sub>5'</sub></span><span class="nm">entalpia w punkcie 5'</span></td><td class="val">265</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> t<sub>d</sub>' = 40 °C bez zmian → punkt 5' = 5: <b>265</b>.</td></tr>
+<tr><td class="lp">16</td><td><span class="sym">i<sub>6'</sub></span><span class="nm">entalpia w punkcie 6'</span></td><td class="val">265</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Dławienie izentalpowe: i<sub>6'</sub> = i<sub>5'</sub> = <b>265</b>. Linia 5'→6' jest teraz dłuższa (sięga do 3 bar).</td></tr>
+<tr><td class="lp">17</td><td><span class="sym">v<sub>ss</sub>' = v<sub>2'</sub></span><span class="nm">objętość właściwa na ssaniu sprężarki</span></td><td class="val">0,090</td><td class="un">m³/kg</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Punkt 2' leży między izochorami 0,080 i 0,100, bliżej 0,100 (tablicowo ≈ 0,092) → z dokładnością 0,005: <b>0,090</b>. Para jest 3× „rzadsza” niż przy +7 °C.</td></tr>
+<tr><td class="lp">18</td><td><span class="sym">t<sub>3'</sub></span><span class="nm">temperatura na końcu sprężania</span></td><td class="val">110</td><td class="un">°C</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Izoterma przez punkt 3' (tablicowo ≈ 109 °C) → <b>110</b>. O ok. 20 K wyżej niż nominalnie.</td></tr>
+<tr><td class="lp">19</td><td><span class="sym">p<sub>k</sub>'</span><span class="nm">ciśnienie skraplania</span></td><td class="val">40</td><td class="un">bar</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Bez zmian – temperatura skraplania nadal 60 °C → ≈ 38,5 bar → <b>40</b>.</td></tr>
+<tr><td class="lp">20</td><td><span class="sym">p<sub>0</sub>'</span><span class="nm">ciśnienie parowania</span></td><td class="val">3,0</td><td class="un">bar</td></tr>
+<tr class="how"><td></td><td colspan="3"><span class="howl">Jak odczytać:</span> Izobara −28 °C leży tuż poniżej linii 3,0 bar (≈ 2,9 bar) → z dokładnością 0,5 bar: <b>3,0</b>.</td></tr></tbody></table></div>
+ <details><summary>Tolerancja odczytu – jakie wartości też są poprawne</summary><div class="body">
+ <p>Wykres w arkuszu pozwala odczytać entalpię z dokładnością jednej działki. Za poprawne uznaje się zwykle wartości w zakresie ±5 kJ/kg wokół podanych, w szczególności:</p>
+ <ul>
+  <li>i<sub>3</sub> = 470 <b>lub</b> 475 kJ/kg (tablicowo 474,8) → wtedy l<sub>t</sub> = 45, q<sub>k</sub> = 210, COP = 210/45 = 4,67 – wniosek bez zmian (≥ 4,0).</li>
+  <li>i<sub>3'</sub> = 495 <b>lub</b> 500 kJ/kg (tablicowo 497,6) → l<sub>t</sub>' = 80, q<sub>k</sub>' = 235, COP' = 2,94 – wniosek bez zmian (&lt; 4,0).</li>
+  <li>i<sub>4</sub> = 305 lub 310; i<sub>2</sub> = 430 (tablicowo 430,8); t<sub>3</sub> = 90 lub 95 °C; v<sub>ss</sub> = 0,030 (0,035 przy odczycie „na styk”).</li>
+ </ul>
+ <p class="note">W Tabeli 4 używaj konsekwentnie <em>swoich</em> odczytów z Tabeli 3 – egzaminator sprawdza spójność obliczeń, a nie zgodność z jedną liczbą.</p>
+ </div></details>
+</section>
+
+<!-- ============ 4. TABELA 4 ============ -->
+<section class="task" id="z4" data-calc>
+ <header><span class="no">Rezultat 4</span><div><h2>Tabela 4 – moc sprężarki i COP</h2><span class="tag">obliczenia krok po kroku</span></div></header>
+ <details open><summary>Dane, szukane i wzory wyjściowe</summary><div class="body">
+ <p><b>Dane:</b> Q̇<sub>k</sub> = 10 kW (dla obu przypadków), entalpie i v<sub>ss</sub> z Tabeli 3.<br><b>Szukane:</b> N<sub>t</sub>, COP (oraz wielkości pośrednie q<sub>0</sub>, q<sub>k</sub>, q<sub>v</sub>, l<sub>t</sub>, ṁ, V̇).</p>
+ <span class="formula">q<sub>0</sub> = i<sub>2</sub> − i<sub>6</sub>   q<sub>k</sub> = i<sub>3</sub> − i<sub>5</sub>   l<sub>t</sub> = i<sub>3</sub> − i<sub>2</sub>   [kJ/kg]</span>
+ <span class="formula">q<sub>v</sub> = <span class="fr"><span class="n">q<sub>k</sub></span><span class="d">v<sub>ss</sub></span></span>   [<span class="fr"><span class="n">kJ/kg</span><span class="d">m³/kg</span></span> = kJ/m³]</span>
+ <span class="formula">ṁ = <span class="fr"><span class="n">Q̇<sub>k</sub></span><span class="d">q<sub>k</sub></span></span>   [<span class="fr"><span class="n">kW</span><span class="d">kJ/kg</span></span> = <span class="fr"><span class="n">kJ/s</span><span class="d">kJ/kg</span></span> = kg/s]</span>
+ <span class="formula">V̇ = ṁ · v<sub>ss</sub>   [kg/s · m³/kg = m³/s]</span>
+ <span class="formula">N<sub>t</sub> = ṁ · l<sub>t</sub>   [kg/s · kJ/kg = kJ/s = kW]</span>
+ <span class="formula">COP = <span class="fr"><span class="n">Q̇<sub>k</sub></span><span class="d">N<sub>t</sub></span></span> = <span class="fr"><span class="n">q<sub>k</sub></span><span class="d">l<sub>t</sub></span></span>   [–]</span>
+ <p class="note cold">Zasada bilansu: q<sub>k</sub> = q<sub>0</sub> + l<sub>t</sub>. Sprawdź to na swoich liczbach – jeśli się nie zgadza, błąd jest w odczycie entalpii. Tu: 165 + 40 = 205 ✓ oraz 155 + 75 = 230 ✓.</p>
+ <p><span class="t" data-k="zaokr" tabindex="0">Zaokrąglanie</span> wg arkusza: ṁ i V̇ do 4 miejsc po przecinku, N<sub>t</sub> i COP do 2 miejsc.</p>
+ </div></details>
+ <p class="table-cap">A. Obliczone wartości dla t = 7 °C</p>
+ <div class="tw"><table><thead><tr><th>Lp.</th><th>Parametr</th><th>Wzór</th><th>Wynik</th><th>Jedn.</th></tr></thead><tbody><tr><td class="lp">1</td><td class="nm"><span class="t" data-k="q0" tabindex="0">jednostkowa wydajność chłodnicza q<sub>0</sub></span></td><td class="frm">q<sub>0</sub> = i<sub>2</sub> − i<sub>6</sub></td><td class="val">165</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> q<sub>0</sub> = 430 − 265 = <b>165 kJ/kg</b></td></tr>
+<tr><td class="lp">2</td><td class="nm"><span class="t" data-k="qk" tabindex="0">jednostkowa wydajność grzewcza q<sub>k</sub></span></td><td class="frm">q<sub>k</sub> = i<sub>3</sub> − i<sub>5</sub></td><td class="val">205</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> q<sub>k</sub> = 470 − 265 = <b>205 kJ/kg</b></td></tr>
+<tr><td class="lp">3</td><td class="nm"><span class="t" data-k="qv" tabindex="0">właściwa objętościowa wydajność grzewcza q<sub>v</sub></span></td><td class="frm">q<sub>v</sub> = <span class='fr'><span class='n'>q<sub>k</sub></span><span class='d'>v<sub>ss</sub></span></span></td><td class="val">6833,33</td><td class="un">kJ/m³</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> q<sub>v</sub> = <span class='fr'><span class='n'>205 kJ/kg</span><span class='d'>0,030 m³/kg</span></span> = <b>6833,33 kJ/m³</b></td></tr>
+<tr><td class="lp">4</td><td class="nm"><span class="t" data-k="lt" tabindex="0">jednostkowa teoretyczna praca sprężania l<sub>t</sub></span></td><td class="frm">l<sub>t</sub> = i<sub>3</sub> − i<sub>2</sub></td><td class="val">40</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> l<sub>t</sub> = 470 − 430 = <b>40 kJ/kg</b></td></tr>
+<tr><td class="lp">5</td><td class="nm"><span class="t" data-k="mdot" tabindex="0">strumień masowy czynnika ṁ</span></td><td class="frm">ṁ = <span class='fr'><span class='n'>Q̇<sub>k</sub></span><span class='d'>q<sub>k</sub></span></span></td><td class="val">0,0488</td><td class="un">kg/s</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> ṁ = <span class='fr'><span class='n'>10 kW</span><span class='d'>205 kJ/kg</span></span> = <span class='fr'><span class='n'>10 kJ/s</span><span class='d'>205 kJ/kg</span></span> = 0,048780… → <b>0,0488 kg/s</b> (4 miejsca)</td></tr>
+<tr><td class="lp">6</td><td class="nm"><span class="t" data-k="vdot" tabindex="0">wydajność objętościowa sprężarki V̇</span></td><td class="frm">V̇ = ṁ · v<sub>ss</sub></td><td class="val">0,0015</td><td class="un">m³/s</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> V̇ = 0,0488 kg/s · 0,030 m³/kg = 0,001464 → <b>0,0015 m³/s</b> (4 miejsca)</td></tr>
+<tr><td class="lp">7</td><td class="nm"><span class="t" data-k="nt" tabindex="0">całkowita moc pobierana przez sprężarkę N<sub>t</sub></span></td><td class="frm">N<sub>t</sub> = ṁ · l<sub>t</sub></td><td class="val">1,95</td><td class="un">kW</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> N<sub>t</sub> = 0,0488 kg/s · 40 kJ/kg = 1,952 kJ/s → <b>1,95 kW</b> (2 miejsca)</td></tr>
+<tr><td class="lp">8</td><td class="nm"><span class="t" data-k="cop" tabindex="0">COP<sub>tz 7 °C</sub></span></td><td class="frm">COP<sub>tz 7 °C</sub> = <span class='fr'><span class='n'>Q̇<sub>k</sub></span><span class='d'>N<sub>t</sub></span></span></td><td class="val">5,13</td><td class="un">–</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> COP = <span class='fr'><span class='n'>10 kW</span><span class='d'>1,95 kW</span></span> = 5,128… → <b>5,13</b> (bezwymiarowy). Kontrola: <span class='fr'><span class='n'>q<sub>k</sub></span><span class='d'>l<sub>t</sub></span></span> = <span class='fr'><span class='n'>205</span><span class='d'>40</span></span> = 5,125 ✓</td></tr></tbody></table></div>
+ <p class="table-cap">B. Obliczone wartości dla t = −20 °C</p>
+ <div class="tw"><table><thead><tr><th>Lp.</th><th>Parametr</th><th>Wzór</th><th>Wynik</th><th>Jedn.</th></tr></thead><tbody><tr><td class="lp">9</td><td class="nm">jednostkowa wydajność chłodnicza q<sub>0</sub>'</td><td class="frm">q<sub>0</sub>' = i<sub>2'</sub> − i<sub>6'</sub></td><td class="val">155</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> q<sub>0</sub>' = 420 − 265 = <b>155 kJ/kg</b></td></tr>
+<tr><td class="lp">10</td><td class="nm">jednostkowa wydajność grzewcza q<sub>k</sub>'</td><td class="frm">q<sub>k</sub>' = i<sub>3'</sub> − i<sub>5'</sub></td><td class="val">230</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> q<sub>k</sub>' = 495 − 265 = <b>230 kJ/kg</b></td></tr>
+<tr><td class="lp">11</td><td class="nm">właściwa objętościowa wydajność grzewcza q<sub>v</sub>'</td><td class="frm">q<sub>v</sub>' = <span class='fr'><span class='n'>q<sub>k</sub>'</span><span class='d'>v<sub>ss</sub>'</span></span></td><td class="val">2555,56</td><td class="un">kJ/m³</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> q<sub>v</sub>' = <span class='fr'><span class='n'>230 kJ/kg</span><span class='d'>0,090 m³/kg</span></span> = <b>2555,56 kJ/m³</b> – prawie 3× mniej niż nominalnie</td></tr>
+<tr><td class="lp">12</td><td class="nm">jednostkowa teoretyczna praca sprężania l<sub>t</sub>'</td><td class="frm">l<sub>t</sub>' = i<sub>3'</sub> − i<sub>2'</sub></td><td class="val">75</td><td class="un">kJ/kg</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> l<sub>t</sub>' = 495 − 420 = <b>75 kJ/kg</b> – prawie 2× więcej niż nominalnie</td></tr>
+<tr><td class="lp">13</td><td class="nm">strumień masowy czynnika ṁ'</td><td class="frm">ṁ' = <span class='fr'><span class='n'>Q̇<sub>k</sub></span><span class='d'>q<sub>k</sub>'</span></span></td><td class="val">0,0435</td><td class="un">kg/s</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> ṁ' = <span class='fr'><span class='n'>10 kW</span><span class='d'>230 kJ/kg</span></span> = 0,043478… → <b>0,0435 kg/s</b></td></tr>
+<tr><td class="lp">14</td><td class="nm">wydajność objętościowa sprężarki V̇'</td><td class="frm">V̇' = ṁ' · v<sub>ss</sub>'</td><td class="val">0,0039</td><td class="un">m³/s</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> V̇' = 0,0435 · 0,090 = 0,003915 → <b>0,0039 m³/s</b> (2,6× więcej – sprężarka musiałaby być znacznie większa)</td></tr>
+<tr><td class="lp">15</td><td class="nm">całkowita moc pobierana przez sprężarkę N<sub>t</sub>'</td><td class="frm">N<sub>t</sub>' = ṁ' · l<sub>t</sub>'</td><td class="val">3,26</td><td class="un">kW</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> N<sub>t</sub>' = 0,0435 · 75 = 3,2625 → <b>3,26 kW</b></td></tr>
+<tr><td class="lp">16</td><td class="nm">COP<sub>tz −20 °C</sub></td><td class="frm">COP<sub>tz −20 °C</sub> = <span class='fr'><span class='n'>Q̇<sub>k</sub></span><span class='d'>N<sub>t</sub>'</span></span></td><td class="val">3,07</td><td class="un">–</td></tr>
+<tr class="how"><td></td><td colspan="4"><span class="howl">Obliczenie:</span> COP' = <span class='fr'><span class='n'>10 kW</span><span class='d'>3,26 kW</span></span> = 3,067… → <b>3,07</b>. Kontrola: <span class='fr'><span class='n'>230</span><span class='d'>75</span></span> = 3,07 ✓</td></tr></tbody></table></div>
+ <h3>Porównanie obu stanów pracy</h3>
+ <div class="cmp">
+  <div class="c"><div class="k">ciśnienie parowania p<sub>0</sub></div><div class="v"><span class="a">8,5</span> → <span class="b">3,0</span> bar</div><div class="d">spadek; stosunek p<sub>k</sub>/p<sub>0</sub> rośnie z 4,7 do 13,3</div></div>
+  <div class="c"><div class="k">q<sub>v</sub> [kJ/m³]</div><div class="v"><span class="a">6833</span> → <span class="b">2556</span></div><div class="d">−63 %: ta sama sprężarka dałaby ok. 37 % mocy</div></div>
+  <div class="c"><div class="k">praca sprężania l<sub>t</sub></div><div class="v"><span class="a">40</span> → <span class="b">75</span> kJ/kg</div><div class="d">+88 %</div></div>
+  <div class="c"><div class="k">moc sprężarki N<sub>t</sub></div><div class="v"><span class="a">1,95</span> → <span class="b">3,26</span> kW</div><div class="d">+67 % przy tej samej mocy grzewczej</div></div>
+  <div class="c"><div class="k">t<sub>3</sub> końca sprężania</div><div class="v"><span class="a">90</span> → <span class="b">110</span> °C</div><div class="d">+20 K – bliżej granicy termicznej oleju</div></div>
+  <div class="c"><div class="k">COP</div><div class="v"><span class="a">5,13</span> → <span class="b">3,07</span></div><div class="d">spadek o 40,2 %</div></div>
+ </div>
+ <details><summary>Dlaczego COP tak spada? – fizyka za liczbami</summary><div class="body">
+ <ol class="steps">
+  <li>Sprężarka musi pokonać większą różnicę ciśnień (3 → 38,5 bar zamiast 8,5 → 38,5 bar). Na wykresie to dłuższy, bardziej pochylony odcinek 2'→3': <span class="t" data-k="lt" tabindex="0">lt</span> rośnie z 40 do 75 kJ/kg.</li>
+  <li>Ciepło oddane w skraplaczu q<sub>k</sub> też rośnie (205 → 230 kJ/kg), ale tylko dlatego, że para tłoczona jest gorętsza – to „drogie” ciepło z pracy sprężarki, a nie „darmowe” z powietrza (<span class="t" data-k="q0" tabindex="0">q0</span> maleje 165 → 155).</li>
+  <li>Objętość właściwa pary na ssaniu rośnie 3× (0,030 → 0,090 m³/kg). Rzeczywista sprężarka o stałej objętości skokowej przetłoczy więc 3× mniej kilogramów – jej moc grzewcza spadnie do ok. 1/3 wartości nominalnej. W arkuszu utrzymano Q̇<sub>k</sub> = 10 kW, więc wynik V̇' = 0,0039 m³/s pokazuje, jak dużo większa sprężarka byłaby potrzebna.</li>
+  <li>Granica teoretyczna (obieg Carnota) dla 245 K / 333 K to COP<sub>C</sub> = 333/88 ≈ 3,8 – żaden układ nie osiągnie przy −20 °C i skraplaniu 60 °C obiecanego 4,0. Obietnica przedstawiciela producenta jest dla tych warunków fizycznie niemożliwa do spełnienia.</li>
+ </ol>
+ </div></details>
+</section>
+
+<!-- ============ 5. PROTOKÓŁ ============ -->
+<section class="task" id="z5" data-calc>
+ <header><span class="no">Rezultat 5</span><div><h2>Protokół oceny wpływu temperatury powietrza</h2><span class="tag">wypełniony wzór z uzasadnieniem</span></div></header>
+ <p>W protokole skreślamy niepoprawne warianty. Poniżej wybrane odpowiedzi (zielone) oraz skreślone (szare) wraz z uzasadnieniem liczbowym. W miejsce daty wpisz datę egzaminu (dd:mm:rrrr), na dole – swój PESEL.</p>
+ <div class="proto"><ol>
+  <li>Spadek temperatury <span class="t" data-k="dolne" tabindex="0">dolnego źródła ciepła</span> z 7 °C do −20 °C <span class="pick">zmienia</span> / <span class="strike">nie zmienia</span> warunki pracy układu:
+   <ul>
+    <li>a) właściwa objętościowa wydajność grzewcza pompy <span class="strike">zwiększa się</span> / <span class="pick">zmniejsza się</span><span class="why">q<sub>v</sub>: 6833,33 → 2555,56 kJ/m³</span></li>
+    <li>b) moc pobierana przez sprężarkę <span class="pick">zwiększa się</span> / <span class="strike">zmniejsza się</span><span class="why">N<sub>t</sub>: 1,95 → 3,26 kW</span></li>
+    <li>c) ciśnienie parowania <span class="strike">zwiększa się</span> / <span class="pick">zmniejsza się</span><span class="why">p<sub>0</sub>: 8,5 → 3,0 bar</span></li>
+    <li>d) temperatura czynnika R410A na końcu izentropowego sprężania <span class="pick">zwiększa się</span> / <span class="strike">zmniejsza się</span><span class="why"><span class="t" data-k="t3" tabindex="0">t3</span>: 90 → 110 °C</span></li>
+    <li>e) współczynnik efektywności energetycznej COP <span class="strike">zwiększa się</span> / <span class="pick">zmniejsza się</span> o <span class="pick">40,2 %</span>
+     <span class="formula">100 % − <span class="fr"><span class="n">COP<sub>tz −20 °C</sub></span><span class="d">COP<sub>tz 7 °C</sub></span></span> · 100 % = 100 % − <span class="fr"><span class="n">3,07</span><span class="d">5,13</span></span> · 100 % = 100 % − 59,84 % = 40,16 % ≈ 40,2 %</span></li>
+   </ul></li>
+  <li>Wyznaczony COP<sub>tz 7 °C</sub> = 5,13, gdy temperatura powietrza wynosi 7 °C, <span class="pick">jest</span> / <span class="strike">nie jest</span> zgodny z oczekiwaniami INWESTORA.<span class="why">5,13 ≥ 4,0 ✓</span></li>
+  <li>Wyznaczony COP<sub>tz −20 °C</sub> = 3,07, gdy temperatura powietrza wynosi −20 °C, <span class="strike">jest</span> / <span class="pick">nie jest</span> zgodny z oczekiwaniami INWESTORA.<span class="why">3,07 &lt; 4,0 ✗ – warunek „nie mniej niż 4,0 w warunkach klimatycznych Polski” nie jest spełniony</span></li>
+  <li>Na podstawie analizy energetycznej pompy ciepła <span class="strike">rekomenduje się</span> / <span class="pick">nie rekomenduje się</span> inwestorowi zastosowania pompy ciepła zaproponowanej przez wykonawcę w projekcie.<span class="why">przy mrozie COP spada o 40 %, moc sprężarki rośnie o 67 %, a rzeczywista sprężarka nie dostarczy 10 kW (q<sub>v</sub> −63 %)</span></li>
+  <li>W związku z powyższym należy zastosować pompę ciepła o <span class="pick">większej</span> / <span class="strike">mniejszej</span> wydajności lub zmienić system ogrzewania z c.o. na <span class="t" data-k="grzejniki" tabindex="0">grzejniki</span> konwektorowe powietrzne lub <span class="t" data-k="podlogowe" tabindex="0">ogrzewanie podłogowe</span>.<span class="why">niskotemperaturowe odbiorniki pozwalają obniżyć t<sub>k</sub> (np. do 35–40 °C), co zmniejsza p<sub>k</sub>/p<sub>0</sub> i podnosi COP</span></li>
+ </ol></div>
+ <details><summary>Komentarz eksperta – co warto dopisać w uzasadnieniu</summary><div class="body">
+ <ul>
+  <li>Pompa spełnia obietnicę COP ≥ 4,0 tylko w warunkach nominalnych (+7 °C). Polskie temperatury obliczeniowe to −16 … −24 °C (strefy klimatyczne II–V), więc ocena przy −20 °C jest realistyczna.</li>
+  <li>Właściwy dobór: pompa o większej mocy nominalnej (albo inwerterowa z wtryskiem pary EVI) <em>lub</em> układ biwalentny z grzałką/kotłem szczytowym poniżej punktu biwalentnego.</li>
+  <li>Najskuteczniejsza poprawa COP to obniżenie temperatury <span class="t" data-k="gorne" tabindex="0">górnego źródła</span>: zamiana grzejników płytowych (55 °C) na ogrzewanie podłogowe (35 °C) obniża p<sub>k</sub> z ok. 38 do ok. 22 bar. C.w.u. można wtedy podgrzewać okresowo w trybie priorytetu.</li>
+ </ul>
+ </div></details>
+</section>
+
+<!-- ============ SŁOWNICZEK ============ -->
+<section class="task" id="gl">
+ <header><span class="no">?</span><div><h2>Słowniczek pojęć</h2><span class="tag">wszystkie definicje z dymków w jednym miejscu</span></div></header>
+ <ul class="gloss"><li><b>A7/W55</b> — Nominalne warunki pracy pompy powietrze/woda: A7 – temperatura powietrza na parowniku +7 °C, W55 – temperatura wody na wylocie ze skraplacza 55 °C. Dla tych warunków producent podaje moc i COP.</li><li><b>bar</b> — Jednostka ciśnienia: 1 bar = 100 kPa = 0,1 MPa. Na wykresie podano ciśnienie bezwzględne.</li><li><b>c.o.</b> — Centralne ogrzewanie – instalacja grzewcza budynku (grzejniki, ogrzewanie podłogowe) zasilana wodą grzewczą ze skraplacza pompy.</li><li><b>c.w.u.</b> — Ciepła woda użytkowa – woda podgrzewana w zasobniku do celów bytowych. Zwykle wymaga 50–55 °C, dlatego wymusza wysoką temperaturę skraplania.</li><li><b>chwilowa efektywność COP</b> — COP wyznaczony dla jednego, konkretnego stanu pracy (danej temperatury powietrza), a nie uśredniony za sezon (SCOP).</li><li><b>ciecz nasycona</b> — Stan na lewej krzywej granicznej (x = 0): skraplanie właśnie się zakończyło. Punkt 4 obiegu.</li><li><b>ciśnienie parowania p0</b> — Ciśnienie w parowniku, odpowiadające temperaturze parowania t0 (dla R410A: 2 °C → ok. 8,5 bar; −28 °C → ok. 3 bar).</li><li><b>ciśnienie skraplania pk</b> — Ciśnienie w skraplaczu, odpowiadające temperaturze skraplania tk (dla R410A: 60 °C → ok. 38,5 bar). Odczyt z osi pionowej wykresu.</li><li><b>COP</b> — Coefficient of Performance – współczynnik efektywności energetycznej pompy ciepła w trybie grzania. Stosunek mocy grzewczej oddanej do górnego źródła do mocy pobranej przez sprężarkę: COP = <span class='fr'><span class='n'>Q̇<sub>k</sub></span><span class='d'>N<sub>t</sub></span></span> = <span class='fr'><span class='n'>q<sub>k</sub></span><span class='d'>l<sub>t</sub></span></span>. Im wyższy, tym taniej grzeje pompa.</li><li><b>dochłodzenie ΔTd</b> — Schłodzenie cieczy poniżej temperatury skraplania przy tym samym ciśnieniu (tu 20 K). Zwiększa jednostkową wydajność grzewczą i chłodniczą – punkt 5 leży na lewo od linii cieczy nasyconej.</li><li><b>dolne źródło ciepła</b> — Ośrodek, z którego pompa pobiera ciepło – tu powietrze zewnętrzne. Im niższa jego temperatura, tym niższe ciśnienie parowania i gorszy COP.</li><li><b>dławienie izentalpowe</b> — Rozprężanie cieczy w zaworze TZR bez wymiany ciepła i pracy – entalpia nie zmienia się (i5 = i6), na wykresie pionowa linia 5→6.</li><li><b>entalpia właściwa i</b> — Ilość energii zawartej w 1 kg czynnika [kJ/kg]. Na wykresie log p–i odczytujemy ją z osi poziomej. Różnice entalpii między punktami obiegu to wprost ciepło lub praca na 1 kg czynnika.</li><li><b>grzejniki stalowe płytowe</b> — Tradycyjne grzejniki wymagające wysokiej temperatury zasilania (55–70 °C). Dla pompy ciepła oznacza to wysokie tk, duży stosunek pk/p0 i niski COP.</li><li><b>górne źródło ciepła</b> — Ośrodek, do którego pompa oddaje ciepło – tu woda grzewcza c.o./c.w.u. o temperaturze 55 °C.</li><li><b>izentropa</b> — Linia stałej entropii s = const [kJ/(kg·K)] – niebieskie linie na wykresie. Teoretyczne sprężanie w sprężarce przebiega wzdłuż izentropy: 2 → 3.</li><li><b>izobara</b> — Linia stałego ciśnienia – na wykresie log p–i pozioma. Parowanie (6→1→2) i skraplanie (3→4→5) przebiegają przy stałym ciśnieniu.</li><li><b>izochora</b> — Linia stałej objętości właściwej v = const [m³/kg] – czerwone linie na wykresie. Z niej odczytujemy v na ssaniu sprężarki (punkt 2).</li><li><b>izoterma</b> — Linia stałej temperatury t = const [°C] – czarne linie. W obszarze pary mokrej (pod krzywą graniczną) pokrywa się z izobarą, w obszarze pary przegrzanej opada stromo w dół.</li><li><b>jednostkowa teoretyczna praca sprężania lt</b> — Praca izentropowego sprężania 1 kg czynnika [kJ/kg]: lt = i3 − i2. Im większy stosunek ciśnień pk/p0, tym większa.</li><li><b>jednostkowa wydajność chłodnicza q0</b> — Ciepło pobrane w parowniku przez 1 kg czynnika [kJ/kg]: q0 = i2 − i6 – szerokość obiegu na dole.</li><li><b>jednostkowa wydajność grzewcza qk</b> — Ciepło oddane w skraplaczu przez 1 kg czynnika [kJ/kg]: qk = i3 − i5 – szerokość obiegu na górze. Zawsze qk = q0 + lt.</li><li><b>K (kelwin)</b> — Jednostka różnicy temperatur. Różnica 8 K to to samo co różnica 8 °C – w rachunkach przegrzania i dochłodzenia używamy kelwinów.</li><li><b>moc grzewcza Q̇k</b> — Strumień ciepła oddawany przez skraplacz do wody grzewczej [kW] – tu nominalne 10 kW.</li><li><b>moc pobierana przez sprężarkę Nt</b> — Teoretyczna moc napędu sprężarki [kW]: Nt = ṁ · lt. W rzeczywistości większa o straty (sprawność izentropowa, silnik).</li><li><b>objętość właściwa v</b> — Objętość zajmowana przez 1 kg czynnika [m³/kg]. Odczytywana z czerwonych izochor. Na ssaniu sprężarki decyduje o tym, ile kg czynnika sprężarka jest w stanie przetłoczyć.</li><li><b>ogrzewanie podłogowe / konwektory</b> — Niskotemperaturowe odbiorniki ciepła (zasilanie 30–40 °C). Obniżają wymaganą temperaturę skraplania, więc pompa pracuje z wyższym COP.</li><li><b>oszronienie parownika</b> — Poniżej 0 °C wilgoć z powietrza osadza się na lamelach parownika jako szron. Rośnie opór cieplny, więc czynnik musi parować w jeszcze niższej temperaturze (stąd −28 °C zamiast −25 °C).</li><li><b>para nasycona sucha</b> — Stan na prawej krzywej granicznej (x = 1): cała ciecz odparowała, ale para nie jest jeszcze przegrzana. Punkt 1 obiegu.</li><li><b>para przegrzana</b> — Para o temperaturze wyższej niż temperatura nasycenia przy danym ciśnieniu – obszar na prawo od krzywej granicznej. Punkty 2 i 3.</li><li><b>parownik PAR</b> — Wymiennik, w którym czynnik wrze przy niskim ciśnieniu, pobierając ciepło z powietrza zewnętrznego (dolne źródło). Przemiana 6→1→2.</li><li><b>przegrzanie ΔTp</b> — Podgrzanie pary powyżej temperatury parowania przy tym samym ciśnieniu (tu 8 K). Chroni sprężarkę przed zassaniem cieczy. Punkt 2 leży na prawo od linii pary nasyconej suchej.</li><li><b>R410A</b> — Czynnik chłodniczy – mieszanina R32/R125 (50/50 %). Wysokie ciśnienia robocze (ok. 8 bar przy 0 °C, ok. 38 bar przy 60 °C), temperatura krytyczna ok. 71 °C, GWP ≈ 2088.</li><li><b>skraplacz SKR</b> — Wymiennik, w którym sprężona para czynnika skrapla się przy wysokim ciśnieniu, oddając ciepło do wody grzewczej (górne źródło). Przemiana 3→4→5.</li><li><b>sprężarka SPR</b> — Podnosi ciśnienie pary czynnika z p0 do pk (przemiana 2→3). Jedyny element pobierający istotną moc elektryczną – jej moc Nt jest mianownikiem COP.</li><li><b>strumień masowy ṁ</b> — Masa czynnika przepływająca przez obieg w jednostce czasu [kg/s]. Wynika z podzielenia wymaganej mocy grzewczej przez jednostkową wydajność grzewczą: ṁ = <span class='fr'><span class='n'>Q̇<sub>k</sub></span><span class='d'>q<sub>k</sub></span></span>.</li><li><b>temperatura końca sprężania t3</b> — Temperatura pary tłoczonej ze sprężarki. Odczytujemy ją z izotermy przechodzącej przez punkt 3. Zbyt wysoka (>120–130 °C) grozi degradacją oleju i uszkodzeniem sprężarki.</li><li><b>TZR</b> — Termostatyczny zawór rozprężny – dławi ciecz z ciśnienia skraplania do ciśnienia parowania (5→6, i = const) i przez czujnik (bańkę) na wylocie z parownika reguluje przegrzanie pary.</li><li><b>wersja arkusza SG</b> — Oznaczenie wersji arkusza CKE (Formuła 2019). W części praktycznej ELE.04 zadanie ma postać dokumentacji – wynikiem są wypełnione tabele, rysunki i protokół.</li><li><b>wydajność objętościowa V̇</b> — Objętość pary zasysanej przez sprężarkę w jednostce czasu [m³/s]: V̇ = ṁ · vss. Parametr doboru wielkości sprężarki.</li><li><b>wykres log p – i</b> — Wykres Molliera dla czynnika chłodniczego: oś pozioma – entalpia właściwa, oś pionowa – ciśnienie w skali logarytmicznej. Obieg pompy ciepła to zamknięty czworobok, a odczyty entalpii dają bezpośrednio bilans energii.</li><li><b>właściwa objętościowa wydajność grzewcza qv</b> — Ciepło grzewcze uzyskane z 1 m³ pary zassanej przez sprężarkę [kJ/m³]: q<sub>v</sub> = <span class='fr'><span class='n'>q<sub>k</sub></span><span class='d'>v<sub>ss</sub></span></span>. Mówi, jak „gęsta energetycznie” jest para na ssaniu – spada gwałtownie przy niskiej temperaturze parowania.</li><li><b>zasady zaokrąglania</b> — Cyfra 5 i większa – zaokrąglamy w górę, mniejsza – w dół. Zaokrąglamy dopiero wynik końcowy, do liczby miejsc podanej w arkuszu.</li></ul>
+</section>
+
+<footer>Opracowanie dydaktyczne na podstawie arkusza CKE ELE.04-01-26.06-SG (Formuła 2019). Wartości odczytane z wykresu log p–i podano z dokładnością wymaganą w arkuszu; wartości tablicowe R410A posłużyły do weryfikacji odczytów i do narysowania wykresu.</footer>
+</div>
+
+<script>
+const GL={"cop": {"n": "COP", "d": "Coefficient of Performance – współczynnik efektywności energetycznej pompy ciepła w trybie grzania. Stosunek mocy grzewczej oddanej do górnego źródła do mocy pobranej przez sprężarkę: COP = <span class='fr'><span class='n'>Q̇<sub>k<\/sub><\/span><span class='d'>N<sub>t<\/sub><\/span><\/span> = <span class='fr'><span class='n'>q<sub>k<\/sub><\/span><span class='d'>l<sub>t<\/sub><\/span><\/span>. Im wyższy, tym taniej grzeje pompa."}, "a7w55": {"n": "A7/W55", "d": "Nominalne warunki pracy pompy powietrze/woda: A7 – temperatura powietrza na parowniku +7 °C, W55 – temperatura wody na wylocie ze skraplacza 55 °C. Dla tych warunków producent podaje moc i COP."}, "co": {"n": "c.o.", "d": "Centralne ogrzewanie – instalacja grzewcza budynku (grzejniki, ogrzewanie podłogowe) zasilana wodą grzewczą ze skraplacza pompy."}, "cwu": {"n": "c.w.u.", "d": "Ciepła woda użytkowa – woda podgrzewana w zasobniku do celów bytowych. Zwykle wymaga 50–55 °C, dlatego wymusza wysoką temperaturę skraplania."}, "r410a": {"n": "R410A", "d": "Czynnik chłodniczy – mieszanina R32/R125 (50/50 %). Wysokie ciśnienia robocze (ok. 8 bar przy 0 °C, ok. 38 bar przy 60 °C), temperatura krytyczna ok. 71 °C, GWP ≈ 2088."}, "entalpia": {"n": "entalpia właściwa i", "d": "Ilość energii zawartej w 1 kg czynnika [kJ/kg]. Na wykresie log p–i odczytujemy ją z osi poziomej. Różnice entalpii między punktami obiegu to wprost ciepło lub praca na 1 kg czynnika."}, "objwl": {"n": "objętość właściwa v", "d": "Objętość zajmowana przez 1 kg czynnika [m³/kg]. Odczytywana z czerwonych izochor. Na ssaniu sprężarki decyduje o tym, ile kg czynnika sprężarka jest w stanie przetłoczyć."}, "logpi": {"n": "wykres log p – i", "d": "Wykres Molliera dla czynnika chłodniczego: oś pozioma – entalpia właściwa, oś pionowa – ciśnienie w skali logarytmicznej. Obieg pompy ciepła to zamknięty czworobok, a odczyty entalpii dają bezpośrednio bilans energii."}, "przegrzanie": {"n": "przegrzanie ΔTp", "d": "Podgrzanie pary powyżej temperatury parowania przy tym samym ciśnieniu (tu 8 K). Chroni sprężarkę przed zassaniem cieczy. Punkt 2 leży na prawo od linii pary nasyconej suchej."}, "dochlodzenie": {"n": "dochłodzenie ΔTd", "d": "Schłodzenie cieczy poniżej temperatury skraplania przy tym samym ciśnieniu (tu 20 K). Zwiększa jednostkową wydajność grzewczą i chłodniczą – punkt 5 leży na lewo od linii cieczy nasyconej."}, "izentropa": {"n": "izentropa", "d": "Linia stałej entropii s = const [kJ/(kg·K)] – niebieskie linie na wykresie. Teoretyczne sprężanie w sprężarce przebiega wzdłuż izentropy: 2 → 3."}, "izochora": {"n": "izochora", "d": "Linia stałej objętości właściwej v = const [m³/kg] – czerwone linie na wykresie. Z niej odczytujemy v na ssaniu sprężarki (punkt 2)."}, "izoterma": {"n": "izoterma", "d": "Linia stałej temperatury t = const [°C] – czarne linie. W obszarze pary mokrej (pod krzywą graniczną) pokrywa się z izobarą, w obszarze pary przegrzanej opada stromo w dół."}, "izobara": {"n": "izobara", "d": "Linia stałego ciśnienia – na wykresie log p–i pozioma. Parowanie (6→1→2) i skraplanie (3→4→5) przebiegają przy stałym ciśnieniu."}, "tzr": {"n": "TZR", "d": "Termostatyczny zawór rozprężny – dławi ciecz z ciśnienia skraplania do ciśnienia parowania (5→6, i = const) i przez czujnik (bańkę) na wylocie z parownika reguluje przegrzanie pary."}, "parownik": {"n": "parownik PAR", "d": "Wymiennik, w którym czynnik wrze przy niskim ciśnieniu, pobierając ciepło z powietrza zewnętrznego (dolne źródło). Przemiana 6→1→2."}, "skraplacz": {"n": "skraplacz SKR", "d": "Wymiennik, w którym sprężona para czynnika skrapla się przy wysokim ciśnieniu, oddając ciepło do wody grzewczej (górne źródło). Przemiana 3→4→5."}, "sprezarka": {"n": "sprężarka SPR", "d": "Podnosi ciśnienie pary czynnika z p0 do pk (przemiana 2→3). Jedyny element pobierający istotną moc elektryczną – jej moc Nt jest mianownikiem COP."}, "pk": {"n": "ciśnienie skraplania pk", "d": "Ciśnienie w skraplaczu, odpowiadające temperaturze skraplania tk (dla R410A: 60 °C → ok. 38,5 bar). Odczyt z osi pionowej wykresu."}, "p0": {"n": "ciśnienie parowania p0", "d": "Ciśnienie w parowniku, odpowiadające temperaturze parowania t0 (dla R410A: 2 °C → ok. 8,5 bar; −28 °C → ok. 3 bar)."}, "dolne": {"n": "dolne źródło ciepła", "d": "Ośrodek, z którego pompa pobiera ciepło – tu powietrze zewnętrzne. Im niższa jego temperatura, tym niższe ciśnienie parowania i gorszy COP."}, "gorne": {"n": "górne źródło ciepła", "d": "Ośrodek, do którego pompa oddaje ciepło – tu woda grzewcza c.o./c.w.u. o temperaturze 55 °C."}, "mdot": {"n": "strumień masowy ṁ", "d": "Masa czynnika przepływająca przez obieg w jednostce czasu [kg/s]. Wynika z podzielenia wymaganej mocy grzewczej przez jednostkową wydajność grzewczą: ṁ = <span class='fr'><span class='n'>Q̇<sub>k<\/sub><\/span><span class='d'>q<sub>k<\/sub><\/span><\/span>."}, "vdot": {"n": "wydajność objętościowa V̇", "d": "Objętość pary zasysanej przez sprężarkę w jednostce czasu [m³/s]: V̇ = ṁ · vss. Parametr doboru wielkości sprężarki."}, "q0": {"n": "jednostkowa wydajność chłodnicza q0", "d": "Ciepło pobrane w parowniku przez 1 kg czynnika [kJ/kg]: q0 = i2 − i6 – szerokość obiegu na dole."}, "qk": {"n": "jednostkowa wydajność grzewcza qk", "d": "Ciepło oddane w skraplaczu przez 1 kg czynnika [kJ/kg]: qk = i3 − i5 – szerokość obiegu na górze. Zawsze qk = q0 + lt."}, "qv": {"n": "właściwa objętościowa wydajność grzewcza qv", "d": "Ciepło grzewcze uzyskane z 1 m³ pary zassanej przez sprężarkę [kJ/m³]: q<sub>v<\/sub> = <span class='fr'><span class='n'>q<sub>k<\/sub><\/span><span class='d'>v<sub>ss<\/sub><\/span><\/span>. Mówi, jak „gęsta energetycznie” jest para na ssaniu – spada gwałtownie przy niskiej temperaturze parowania."}, "lt": {"n": "jednostkowa teoretyczna praca sprężania lt", "d": "Praca izentropowego sprężania 1 kg czynnika [kJ/kg]: lt = i3 − i2. Im większy stosunek ciśnień pk/p0, tym większa."}, "nt": {"n": "moc pobierana przez sprężarkę Nt", "d": "Teoretyczna moc napędu sprężarki [kW]: Nt = ṁ · lt. W rzeczywistości większa o straty (sprawność izentropowa, silnik)."}, "qkdot": {"n": "moc grzewcza Q̇k", "d": "Strumień ciepła oddawany przez skraplacz do wody grzewczej [kW] – tu nominalne 10 kW."}, "oszronienie": {"n": "oszronienie parownika", "d": "Poniżej 0 °C wilgoć z powietrza osadza się na lamelach parownika jako szron. Rośnie opór cieplny, więc czynnik musi parować w jeszcze niższej temperaturze (stąd −28 °C zamiast −25 °C)."}, "t3": {"n": "temperatura końca sprężania t3", "d": "Temperatura pary tłoczonej ze sprężarki. Odczytujemy ją z izotermy przechodzącej przez punkt 3. Zbyt wysoka (>120–130 °C) grozi degradacją oleju i uszkodzeniem sprężarki."}, "dlawienie": {"n": "dławienie izentalpowe", "d": "Rozprężanie cieczy w zaworze TZR bez wymiany ciepła i pracy – entalpia nie zmienia się (i5 = i6), na wykresie pionowa linia 5→6."}, "paranas": {"n": "para nasycona sucha", "d": "Stan na prawej krzywej granicznej (x = 1): cała ciecz odparowała, ale para nie jest jeszcze przegrzana. Punkt 1 obiegu."}, "ciecznas": {"n": "ciecz nasycona", "d": "Stan na lewej krzywej granicznej (x = 0): skraplanie właśnie się zakończyło. Punkt 4 obiegu."}, "paraprzeg": {"n": "para przegrzana", "d": "Para o temperaturze wyższej niż temperatura nasycenia przy danym ciśnieniu – obszar na prawo od krzywej granicznej. Punkty 2 i 3."}, "grzejniki": {"n": "grzejniki stalowe płytowe", "d": "Tradycyjne grzejniki wymagające wysokiej temperatury zasilania (55–70 °C). Dla pompy ciepła oznacza to wysokie tk, duży stosunek pk/p0 i niski COP."}, "podlogowe": {"n": "ogrzewanie podłogowe / konwektory", "d": "Niskotemperaturowe odbiorniki ciepła (zasilanie 30–40 °C). Obniżają wymaganą temperaturę skraplania, więc pompa pracuje z wyższym COP."}, "chwilowy": {"n": "chwilowa efektywność COP", "d": "COP wyznaczony dla jednego, konkretnego stanu pracy (danej temperatury powietrza), a nie uśredniony za sezon (SCOP)."}, "bar": {"n": "bar", "d": "Jednostka ciśnienia: 1 bar = 100 kPa = 0,1 MPa. Na wykresie podano ciśnienie bezwzględne."}, "kelwin": {"n": "K (kelwin)", "d": "Jednostka różnicy temperatur. Różnica 8 K to to samo co różnica 8 °C – w rachunkach przegrzania i dochłodzenia używamy kelwinów."}, "zaokr": {"n": "zasady zaokrąglania", "d": "Cyfra 5 i większa – zaokrąglamy w górę, mniejsza – w dół. Zaokrąglamy dopiero wynik końcowy, do liczby miejsc podanej w arkuszu."}, "sg": {"n": "wersja arkusza SG", "d": "Oznaczenie wersji arkusza CKE (Formuła 2019). W części praktycznej ELE.04 zadanie ma postać dokumentacji – wynikiem są wypełnione tabele, rysunki i protokół."}};
+const pop=document.getElementById('pop');
+let cur=null,hoverT=null,pinned=false;
+const fine=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+function openPop(el){
+  const g=GL[el.dataset.k];if(!g)return;
+  if(cur)cur.classList.remove('open');
+  cur=el;el.classList.add('open');
+  pop.innerHTML='<button class="x" type="button" aria-label="Zamknij">×</button><b>'+g.n+'</b>'+g.d;
+  pop.classList.add('show');
+  const r=el.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight,vw=document.documentElement.clientWidth;
+  let x=r.left+window.scrollX+r.width/2-pw/2;
+  x=Math.max(window.scrollX+8,Math.min(x,window.scrollX+vw-pw-8));
+  let y=r.bottom+window.scrollY+8;
+  if(r.bottom+ph+16>window.innerHeight&&r.top-ph-8>0)y=r.top+window.scrollY-ph-8;
+  pop.style.left=x+'px';pop.style.top=y+'px';
+  pop.querySelector('.x').addEventListener('click',e=>{e.stopPropagation();closePop();});
+}
+function closePop(){pop.classList.remove('show');if(cur)cur.classList.remove('open');cur=null;pinned=false;}
+document.querySelectorAll('.t').forEach(el=>{
+  el.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();
+    if(cur===el&&pinned){closePop();return;}
+    openPop(el);pinned=true;});
+  el.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();if(cur===el&&pinned){closePop();}else{openPop(el);pinned=true;}}
+    if(e.key==='Escape')closePop();
+  });
+  if(fine){
+    el.addEventListener('mouseenter',()=>{clearTimeout(hoverT);if(!pinned)openPop(el);});
+    el.addEventListener('mouseleave',()=>{hoverT=setTimeout(()=>{if(!pinned&&!pop.matches(':hover'))closePop();},250);});
+  }
+});
+if(fine){
+  pop.addEventListener('mouseleave',()=>{hoverT=setTimeout(()=>{if(!pinned)closePop();},200);});
+  pop.addEventListener('mouseenter',()=>clearTimeout(hoverT));
+}
+document.addEventListener('click',e=>{if(!pop.contains(e.target))closePop();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePop();});
+window.addEventListener('resize',()=>{if(cur)openPop(cur);});
+
+// Rozwiń / zwiń wszystkie rozwiązania
+const btnAll=document.getElementById('btn-all');let allOpen=false;
+btnAll.addEventListener('click',()=>{
+  allOpen=!allOpen;
+  document.querySelectorAll('details').forEach(d=>d.open=allOpen);
+  btnAll.textContent=allOpen?'Zwiń wszystkie rozwiązania':'Rozwiń wszystkie rozwiązania';
+});
+
+// Filtr: tylko sekcje obliczeniowe
+const btnCalc=document.getElementById('btn-calc');let onlyCalc=false;
+btnCalc.addEventListener('click',()=>{
+  onlyCalc=!onlyCalc;btnCalc.classList.toggle('on',onlyCalc);
+  btnCalc.setAttribute('aria-pressed',onlyCalc?'true':'false');
+  document.querySelectorAll('.task').forEach(s=>s.classList.toggle('hidden',onlyCalc&&!s.hasAttribute('data-calc')));
+  document.querySelectorAll('.nav a[data-for]').forEach(a=>{
+    const s=document.getElementById(a.dataset.for);
+    a.classList.toggle('hidden',!!(s&&s.classList.contains('hidden')));
+  });
+});
+
+// Nawigacja: przewijanie do sekcji (działa też, gdy hash w adresie jest blokowany)
+document.querySelectorAll('.nav a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const s=document.querySelector(a.getAttribute('href'));
+    if(!s)return;e.preventDefault();
+    s.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});
+  });
+});
+</script>
+</body>
+</html>
