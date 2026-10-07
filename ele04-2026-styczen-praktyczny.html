@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ELE.04 – styczeń 2026 – część praktyczna – rozwiązanie krok po kroku</title>
+<meta name="description" content="Rozwiązanie krok po kroku części praktycznej ELE.04-01-26.01-SG (styczeń 2026): temperatury w centrali, sprawność wymiennika obrotowego, wykres Molliera, moce nagrzewnicy i chłodnicy, bilans powietrza – z zakresami z klucza CKE.">
+<meta property="og:title" content="ELE.04 styczeń 2026 – centrala klimatyzacyjna z pompą ciepła">
+<meta property="og:description" content="Interaktywne rozwiązanie części praktycznej ELE.04 (styczeń 2026) z zakresami z klucza CKE.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
 <style>
   :root{
     --bg:#f3f5f7; --card:#ffffff; --ink:#1f2933; --muted:#5b6b7a; --line:#dfe5ea;
@@ -11,10 +16,18 @@
     --ok:#15803d; --ok-soft:#e8f6ec; --warn:#b45309; --warn-soft:#fdf3e3;
     --info:#1d4ed8; --info-soft:#e8eefc; --term:#0e5f8a;
     --radius:16px; --shadow:0 2px 10px rgba(20,30,40,.06);
+    --card2:#fbfcfd; --th:#eef2f5; --nav:rgba(243,245,247,.94); --field:#fff;
+    --data-line:#c7d5f7; --ok-line:#bfe3c9; --warn-line:#f3d9a8;
+    --dev-bg:#fff7ed; --dev-line:#f7c99a; --rot-bg:#fef9c3; --rot-line:#f2e06a;
+    --chart-bg:#f1e8fb; --chart-ink:#6d28d9; --term-open:#e3f1f9;
+    --tip-bg:#1f2933; --tip-ink:#fff; --tip-b:#9fe3d8;
+    --grid:#e5e7eb; --ax:#374151; --iso:#9ca3af; --iso-l:#6b7280; --hot:#dc2626;
   }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111820; --card:#1a232d; --ink:#e6ecf2; --muted:#9aa8b5; --line:#2e3a46;--accent:#14897c; --accent-soft:#16302d; --accent-ink:#6fd6c8;--ok:#6cc79c; --ok-soft:#1c332a; --warn:#e0a955; --warn-soft:#3a2d18;--info:#7aa2f7; --info-soft:#1c2740; --term:#7cc0e8; --shadow:0 2px 10px rgba(0,0,0,.4);--card2:#16202a; --th:#222d38; --nav:rgba(17,24,32,.94); --field:#1f2a35;--data-line:#2d3f66; --ok-line:#2b5a41; --warn-line:#5a4520;--dev-bg:#3a2a1a; --dev-line:#6b4a24; --rot-bg:#36321a; --rot-line:#6b6224;--chart-bg:#2e2240; --chart-ink:#c4a5f5; --term-open:#1a2e3d;--tip-bg:#f3f5f7; --tip-ink:#1a2430; --tip-b:#0b5c56;--grid:#2e3a46; --ax:#b3bfcb; --iso:#5d6b78; --iso-l:#8a98a5; --hot:#f08a63;}}
+  :root[data-theme="dark"]{--bg:#111820; --card:#1a232d; --ink:#e6ecf2; --muted:#9aa8b5; --line:#2e3a46;--accent:#14897c; --accent-soft:#16302d; --accent-ink:#6fd6c8;--ok:#6cc79c; --ok-soft:#1c332a; --warn:#e0a955; --warn-soft:#3a2d18;--info:#7aa2f7; --info-soft:#1c2740; --term:#7cc0e8; --shadow:0 2px 10px rgba(0,0,0,.4);--card2:#16202a; --th:#222d38; --nav:rgba(17,24,32,.94); --field:#1f2a35;--data-line:#2d3f66; --ok-line:#2b5a41; --warn-line:#5a4520;--dev-bg:#3a2a1a; --dev-line:#6b4a24; --rot-bg:#36321a; --rot-line:#6b6224;--chart-bg:#2e2240; --chart-ink:#c4a5f5; --term-open:#1a2e3d;--tip-bg:#f3f5f7; --tip-ink:#1a2430; --tip-b:#0b5c56;--grid:#2e3a46; --ax:#b3bfcb; --iso:#5d6b78; --iso-l:#8a98a5; --hot:#f08a63;}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
   @media (min-width:700px){body{font-size:17px}}
   .wrap{max-width:980px;margin:0 auto;padding:16px 16px 80px}
 
@@ -24,14 +37,14 @@
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
   .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 12px;font-size:.9rem}
 
-  nav.topnav{position:sticky;top:0;z-index:50;background:rgba(243,245,247,.94);backdrop-filter:blur(6px);padding:10px 0;margin:12px 0 6px;border-bottom:1px solid var(--line)}
+  nav.topnav{position:sticky;top:0;z-index:50;background:var(--nav);backdrop-filter:blur(6px);padding:10px 0;margin:12px 0 6px;border-bottom:1px solid var(--line)}
   .navrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   .navrow .lbl{font-size:.85rem;color:var(--muted);margin-right:4px}
-  .navbtn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:6px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--accent-ink);font-weight:600;text-decoration:none;font-size:.95rem}
+  .navbtn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:6px 12px;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--accent-ink);font-weight:600;text-decoration:none;font-size:.95rem}
   .navbtn:hover{background:var(--accent-soft)}
   .tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-  .tbtn{min-height:44px;padding:8px 14px;border-radius:12px;border:1px solid var(--accent);background:#fff;color:var(--accent-ink);font-weight:600;cursor:pointer;font-size:.95rem}
-  .tbtn.active{background:var(--accent);color:#fff}
+  .tbtn{min-height:44px;padding:8px 14px;border-radius:12px;border:1px solid var(--accent);background:var(--field);color:var(--accent-ink);font-weight:600;cursor:pointer;font-size:.95rem}
+  .tbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
   section.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 18px;margin:18px 0;scroll-margin-top:130px}
   @media (min-width:700px){section.card{padding:26px 28px}}
@@ -39,10 +52,11 @@
   .num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--accent);color:#fff;font-size:1rem;flex:0 0 auto}
   .sub{color:var(--muted);margin:0 0 12px;font-size:.95rem}
   .tag{display:inline-block;font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--info-soft);color:var(--info);font-weight:600;vertical-align:middle}
+  .tags{display:inline-flex;gap:6px;flex-wrap:wrap}
   .tag.calc{background:var(--warn-soft);color:var(--warn)}
-  .tag.chart{background:#f1e8fb;color:#6d28d9}
+  .tag.chart{background:var(--chart-bg);color:var(--chart-ink)}
 
-  details.sol{border:1px solid var(--line);border-radius:12px;margin-top:12px;background:#fbfcfd}
+  details.sol{border:1px solid var(--line);border-radius:12px;margin-top:12px;background:var(--card2)}
   details.sol>summary{cursor:pointer;padding:12px 14px;font-weight:700;color:var(--accent-ink);list-style:none;display:flex;align-items:center;gap:8px;min-height:44px}
   details.sol>summary::-webkit-details-marker{display:none}
   details.sol>summary::before{content:"▸";transition:transform .2s;display:inline-block}
@@ -52,15 +66,15 @@
   .step{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:10px 14px;margin:12px 0}
   .step b.t{display:block;color:var(--accent-ink);margin-bottom:4px}
   .box{border-radius:12px;padding:12px 14px;margin:12px 0;border:1px solid var(--line)}
-  .box.data{background:var(--info-soft);border-color:#c7d5f7}
-  .box.result{background:var(--ok-soft);border-color:#bfe3c9}
-  .box.warn{background:var(--warn-soft);border-color:#f3d9a8}
+  .box.data{background:var(--info-soft);border-color:var(--data-line)}
+  .box.result{background:var(--ok-soft);border-color:var(--ok-line)}
+  .box.warn{background:var(--warn-soft);border-color:var(--warn-line)}
   .box h4{margin:0 0 6px;font-size:1rem}
   .ok{color:var(--ok);font-weight:700}
-  .badge-ok{display:inline-flex;align-items:center;gap:6px;background:var(--ok);color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:.9rem}
+  .badge-ok{display:inline-flex;align-items:center;gap:6px;background:#15803d;color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:.9rem}
   .badge-no{display:inline-flex;align-items:center;gap:6px;background:#b91c1c;color:#fff;border-radius:999px;padding:3px 12px;font-weight:700;font-size:.9rem}
 
-  .formula{font-family:"Cambria","Times New Roman",Georgia,serif;font-size:1.15rem;background:#fff;border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;overflow-x:auto;white-space:nowrap}
+  .formula{font-family:"Cambria","Times New Roman",Georgia,serif;font-size:1.15rem;background:var(--field);border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;overflow-x:auto;white-space:nowrap}
   .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px}
   .frac>span{padding:0 6px}
   .frac>span:first-child{border-bottom:1.5px solid var(--ink)}
@@ -71,43 +85,46 @@
   .tablewrap{overflow-x:auto;margin:10px 0}
   table{border-collapse:collapse;width:100%;min-width:320px;font-size:.95rem}
   th,td{border:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
-  th{background:#eef2f5}
+  th{background:var(--th)}
   td.l,th.l{text-align:left}
   td.res{background:var(--ok-soft);font-weight:700;color:var(--ok)}
   caption{caption-side:top;text-align:left;font-weight:700;padding:6px 0;color:var(--accent-ink)}
 
   .flow{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch;margin:10px 0}
-  .fbox{flex:1 1 120px;min-width:110px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;text-align:center;font-size:.9rem}
+  .fbox{flex:1 1 120px;min-width:110px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--field);text-align:center;font-size:.9rem}
   .fbox small{display:block;color:var(--muted);font-size:.8rem}
-  .fbox.dev{background:#fff7ed;border-color:#f7c99a}
-  .fbox.rot{background:#fef9c3;border-color:#f2e06a}
-  .fbox.t{background:var(--ok-soft);border-color:#bfe3c9;font-weight:700}
+  .fbox.dev{background:var(--dev-bg);border-color:var(--dev-line)}
+  .fbox.rot{background:var(--rot-bg);border-color:var(--rot-line)}
+  .fbox.t{background:var(--ok-soft);border-color:var(--ok-line);font-weight:700}
   .arrow{align-self:center;color:var(--muted);font-size:1.2rem;padding:0 2px}
   .flowtitle{font-weight:700;margin:14px 0 4px}
 
   .term{color:var(--term);border-bottom:2px dotted var(--term);cursor:help;text-decoration:none;font-weight:600;padding-bottom:1px;-webkit-tap-highlight-color:transparent}
   .term::after{content:"?";display:inline-block;font-size:.65em;vertical-align:super;margin-left:2px;color:var(--term);opacity:.75}
-  .term.open{background:#e3f1f9;border-radius:4px}
-  #tip{position:absolute;z-index:1000;max-width:min(340px,calc(100vw - 32px));background:#1f2933;color:#fff;border-radius:12px;padding:12px 14px;font-size:.92rem;line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.25);display:none}
-  #tip b{color:#9fe3d8;display:block;margin-bottom:4px}
-  #tip .arr{position:absolute;width:12px;height:12px;background:#1f2933;transform:rotate(45deg)}
+  .term.open{background:var(--term-open);border-radius:4px}
+  #tip{position:absolute;z-index:1000;max-width:min(340px,calc(100vw - 32px));background:var(--tip-bg);color:var(--tip-ink);border-radius:12px;padding:12px 14px;font-size:.92rem;line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.25);display:none}
+  #tip b{color:var(--tip-b);display:block;margin-bottom:4px}
+  #tip .arr{position:absolute;width:12px;height:12px;background:var(--tip-bg);transform:rotate(45deg)}
   #tip.below .arr{top:-6px}
   #tip.above .arr{bottom:-6px}
 
   .glossary{display:grid;grid-template-columns:1fr;gap:10px}
   @media (min-width:700px){.glossary{grid-template-columns:1fr 1fr}}
-  .gitem{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbfcfd}
+  .gitem{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card2)}
   .gitem b{color:var(--term)}
 
   .summary-grid{display:grid;grid-template-columns:1fr;gap:10px}
   @media (min-width:600px){.summary-grid{grid-template-columns:1fr 1fr}}
-  .sitem{border-radius:12px;padding:12px 14px;background:var(--ok-soft);border:1px solid #bfe3c9}
+  .sitem{border-radius:12px;padding:12px 14px;background:var(--ok-soft);border:1px solid var(--ok-line)}
   .sitem b{display:block;color:var(--ok)}
 
-  .chart{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:12px}
+  .chart{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:12px}
   .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.9rem;margin-top:6px}
   .legend span::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;background:var(--c)}
 
+  .key{display:inline-block;margin-left:6px;font-size:.76rem;font-weight:600;color:var(--ok);background:var(--ok-soft);border:1px solid var(--ok-line);border-radius:6px;padding:0 7px;white-space:nowrap}
+  .keyline{margin:8px 0 0;font-size:.95rem}
+  a{color:var(--term)}
   ul.tight{margin:6px 0;padding-left:20px}
   ul.tight li{margin:3px 0}
   .hidden{display:none!important}
@@ -292,7 +309,7 @@
       </div>
       <div class="box warn theory">
         <h4>Sprawdzenie logiki</h4>
-        Zimą wywiew (22 °C) oddaje ciepło nawiewowi: nawiew grzeje się −14 → 17 °C (+31 K), wywiew chłodzi się 22 → −7 °C (−29 K). Następnie parownik pompy ciepła „dobiera” jeszcze ciepło z wywiewu (−7 → −12 °C) i przekazuje je przez skraplacz do nawiewu (17 → 26 °C). Wszystko się zgadza.
+        Zimą wywiew (22 °C) oddaje ciepło nawiewowi: nawiew grzeje się −14 → 17 °C (+31 K), wywiew chłodzi się 22 → −7 °C (−29 K). Następnie parownik pompy ciepła „dobiera” jeszcze ciepło z wywiewu (−7 → −12 °C) i przekazuje je przez skraplacz do nawiewu (17 → 26 °C). Kierunki zmian są zgodne z fizyką. Bilans wymiennika nie domyka się idealnie (zimą +31 K wobec −29 K, latem −9 K wobec +10 K) – to uproszczenia danych w arkuszu. Klucz CKE przyjmuje dokładnie te temperatury, więc tak je wpisujemy.
       </div>
     </div>
   </details>
@@ -368,12 +385,13 @@
     </table>
     </div>
     <p class="theory" style="margin:8px 0 0">Wartości 75–86 % to typowy zakres dla wymienników obrotowych – kolejne potwierdzenie, że temperatury z tabeli 1 są poprawne.</p>
+    <p class="keyline"><span class="key">klucz CKE: 75 % i 86 %</span> – albo wartości zgodne z Twoją tabelą 2. Dopuszczalny zapis jako ułamek dziesiętny (0,75 i 0,86); sprawność musi mieścić się w przedziale 50–100 %.</p>
   </div>
 </section>
 
 <!-- ===================== ZADANIE 3 ===================== -->
 <section class="card calc" id="z3">
-  <h2><span class="num">3</span> Wykresy Molliera i Tabela 5 – entalpie właściwe <span class="tag chart">wykres</span> <span class="tag calc">obliczeniowe</span></h2>
+  <h2><span class="num">3</span> Wykresy Molliera i Tabela 5 – entalpie właściwe <span class="tags"><span class="tag chart">wykres</span> <span class="tag calc">obliczeniowe</span></span></h2>
   <p class="sub">Naniesienie przemian L1→L2 (chłodzenie latem) i Z3→Z4 (ogrzewanie zimą) oraz odczyt entalpii i.</p>
 
   <div class="box data">
@@ -403,10 +421,10 @@
       <p><b>Schemat poglądowy (uproszczony wykres i–x, ten sam układ osi co w arkuszu):</b></p>
       <svg id="mollier" class="chart" viewBox="0 0 640 460" role="img" aria-label="Uproszczony wykres Molliera z punktami L1, L2, Z3, Z4"></svg>
       <div class="legend">
-        <span style="--c:#0f766e">linia nasycenia φ = 100 %</span>
-        <span style="--c:#9ca3af">izentalpy i = const</span>
-        <span style="--c:#1d4ed8">L1 → L2 chłodzenie z osuszaniem</span>
-        <span style="--c:#dc2626">Z3 → Z4 ogrzewanie (x = const)</span>
+        <span style="--c:var(--accent)">linia nasycenia φ = 100 %</span>
+        <span style="--c:var(--iso)">izentalpy i = const</span>
+        <span style="--c:var(--info)">L1 → L2 chłodzenie z osuszaniem</span>
+        <span style="--c:var(--hot)">Z3 → Z4 ogrzewanie (x = const)</span>
       </div>
     </div>
   </details>
@@ -414,7 +432,7 @@
   <details class="sol" open>
     <summary>Odczyt i sprawdzenie rachunkowe entalpii (tabela 5)</summary>
     <div class="body">
-      <p class="theory">Na egzaminie wartości odczytuje się z wykresu (dopuszczalna tolerancja odczytu ok. ±1 kJ/kg). Żeby mieć pewność, warto sprawdzić je wzorem na <span class="term" data-def="Energia zawarta w 1 kg powietrza suchego wraz z zawartą w nim parą wodną, liczona od stanu odniesienia 0 °C. Oznaczenie i (lub h), jednostka kJ/kg. Różnica entalpii przed i po przemianie mówi, ile energii dostarczono lub odebrano powietrzu.">entalpię właściwą</span> powietrza wilgotnego:</p>
+      <p class="theory">Na egzaminie wartości odczytuje się z wykresu (tolerancja w zasadach oceniania CKE: ±1 kJ/kg). Żeby mieć pewność, warto sprawdzić je wzorem na <span class="term" data-def="Energia zawarta w 1 kg powietrza suchego wraz z zawartą w nim parą wodną, liczona od stanu odniesienia 0 °C. Oznaczenie i (lub h), jednostka kJ/kg. Różnica entalpii przed i po przemianie mówi, ile energii dostarczono lub odebrano powietrzu.">entalpię właściwą</span> powietrza wilgotnego:</p>
       <div class="formula">i = 1,005 · t + x · (2501 + 1,86 · t) &nbsp;[kJ/kg], &nbsp; x w kg/kg</div>
       <div class="step"><b class="t">L1: t = 24 °C, x = 0,010 kg/kg</b>
         <div class="formula">i₁ = 1,005·24 + 0,010·(2501 + 1,86·24) = 24,12 + 0,010·2545,6 = 24,12 + 25,46 ≈ <b>49,6 kJ/kg</b></div>
@@ -480,7 +498,7 @@
       </div>
       <div class="box warn">
         <h4>Który wynik wpisać?</h4>
-        Egzaminator sprawdza <b>spójność</b>: moc musi wynikać z Δi wpisanego do tabeli 5/6 (kolumna 4) i strumienia w m³/s, z zaokrągleniem do dwóch miejsc. Oba warianty (z odczytu „okrągłego” lub dokładniejszego) mieszczą się w tolerancji odczytu z wykresu. Poniżej przyjęto wartości z odczytu wykresu (20 i 9 kJ/kg) – najprostsze i najczęściej spotykane w kluczu.
+        Egzaminator sprawdza <b>spójność</b>: moc musi wynikać z Δi wpisanego do tabeli 5/6 (kolumna 4) i strumienia w m³/s, z zaokrągleniem do dwóch miejsc. Oba warianty (z odczytu „okrągłego” lub dokładniejszego) mieszczą się w tolerancji odczytu z wykresu. Klucz CKE nie wskazuje jednej wartości: sprawdza, czy Δi wynika z tabeli 5, a moc z iloczynu kolumn 2, 3 i 4, oraz czy mieści się w przedziale <b>15–25 kW</b> (nagrzewnica) i <b>40–55 kW</b> (chłodnica). Poniżej przyjęto wartości z odczytu wykresu (20 i 9 kJ/kg).
       </div>
     </div>
   </details>
@@ -547,12 +565,12 @@
   <h2><span class="num">✓</span> Podsumowanie wyników</h2>
   <p class="sub">Ściąga do szybkiego porównania z własnym arkuszem.</p>
   <div class="summary-grid">
-    <div class="sitem"><b>Tabela 1 – lato</b> t₁ = 33 °C, t₂ = 24 °C, t₃ = 21 °C, t₄ = 31 °C</div>
-    <div class="sitem"><b>Tabela 1 – zima</b> t₁ = −14 °C, t₂ = 17 °C, t₃ = 22 °C, t₄ = −7 °C</div>
-    <div class="sitem"><b>Tabela 3 – sprawność</b> lato η<sub>t</sub> = 75 %; zima η<sub>t</sub> ≈ 86,1 %</div>
-    <div class="sitem"><b>Tabela 5 – entalpie</b> i₁ ≈ 50, i₂ ≈ 30, i₃ ≈ 30, i₄ ≈ 39 kJ/kg</div>
-    <div class="sitem"><b>Tabela 6 – moce</b> Q̇<sub>N</sub> ≈ 21,78 kW (Δi = 9); Q̇<sub>Ch</sub> ≈ 47,20 kW (Δi = 20); V̇ = 2 m³/s</div>
-    <div class="sitem"><b>Tabela 7 – powietrze świeże</b> suma 6720 m³/h ≤ 7200 m³/h → <b>TAK</b></div>
+    <div class="sitem"><b>Tabela 1 – lato</b> t₁ = 33 °C, t₂ = 24 °C, t₃ = 21 °C, t₄ = 31 °C <span class="key">klucz CKE: zgodne</span></div>
+    <div class="sitem"><b>Tabela 1 – zima</b> t₁ = −14 °C, t₂ = 17 °C, t₃ = 22 °C, t₄ = −7 °C <span class="key">klucz CKE: zgodne</span></div>
+    <div class="sitem"><b>Tabela 3 – sprawność</b> lato η<sub>t</sub> = 75 %; zima η<sub>t</sub> ≈ 86,1 % <span class="key">klucz CKE: 75 % / 86 %</span></div>
+    <div class="sitem"><b>Tabela 5 – entalpie</b> i₁ ≈ 50, i₂ ≈ 30, i₃ ≈ 30, i₄ ≈ 39 kJ/kg <span class="key">klucz CKE: ±1 kJ/kg</span></div>
+    <div class="sitem"><b>Tabela 6 – moce</b> Q̇<sub>N</sub> ≈ 21,78 kW (Δi = 9); Q̇<sub>Ch</sub> ≈ 47,20 kW (Δi = 20); V̇ = 2 m³/s <span class="key">klucz CKE: 15–25 / 40–55 kW</span></div>
+    <div class="sitem"><b>Tabela 7 – powietrze świeże</b> suma 6720 m³/h ≤ 7200 m³/h → <b>TAK</b> <span class="key">klucz CKE: 6720, skreślone „Nie”</span></div>
   </div>
   <div class="box warn theory" style="margin-top:14px">
     <h4>Najczęstsze błędy na tym arkuszu</h4>
@@ -574,7 +592,7 @@
   <div class="glossary" id="glossary"></div>
 </section>
 
-<footer>Rozwiązanie opracowane na podstawie arkusza ELE.04-01-26.01-SG (CKE, styczeń 2026). Wartości entalpii odczytane z wykresu Molliera mogą różnić się o ±1 kJ/kg – to normalna tolerancja odczytu.</footer>
+<footer>Rozwiązanie opracowane na podstawie arkusza ELE.04-01-26.01-SG (CKE, styczeń 2026). Wartości entalpii odczytane z wykresu Molliera mogą różnić się o ±1 kJ/kg – tyle dopuszczają <a href="https://arkusze.pl/zawodowy/ele04-2026-styczen-egzamin-zawodowy-praktyczny-zasady-oceniania.pdf">zasady oceniania CKE</a>, z których pochodzą też zakresy oznaczone „klucz CKE”.</footer>
 </div>
 
 <div id="tip" role="tooltip"><div class="arr"></div><b id="tipTitle"></b><span id="tipText"></span></div>
@@ -649,43 +667,46 @@
   var svg=document.getElementById('mollier'); var NS='http://www.w3.org/2000/svg';
   var X0=60,Y0=20,W=540,H=380; var xmax=20,tmin=0,tmax=35;
   function px(x){return X0+x/xmax*W;} function py(t){return Y0+H-(t-tmin)/(tmax-tmin)*H;}
-  function add(tag,attrs,text){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;svg.appendChild(e);return e;}
+  function add(tag,attrs,text){var e=document.createElementNS(NS,tag);for(var k in attrs){var v=attrs[k];if((k==='fill'||k==='stroke')&&String(v).indexOf('var(')===0)e.style[k]=v;else e.setAttribute(k,v);}if(text!=null)e.textContent=text;svg.appendChild(e);return e;}
   function xs(t){ var p=610.78*Math.exp(17.27*t/(t+237.3)); return 622*p/(101325-p); } // g/kg przy nasyceniu
   function tOfI(i,x){ x=x/1000; return (i-x*2501)/(1.005+1.86*x); }
   // siatka
-  for(var x=0;x<=xmax;x+=5){ add('line',{x1:px(x),y1:py(tmin),x2:px(x),y2:py(tmax),stroke:'#e5e7eb'}); add('text',{x:px(x),y:py(tmin)+18,'text-anchor':'middle','font-size':'12',fill:'#374151'},x); }
-  for(var t=0;t<=tmax;t+=5){ add('line',{x1:px(0),y1:py(t),x2:px(xmax),y2:py(t),stroke:'#e5e7eb'}); add('text',{x:px(0)-8,y:py(t)+4,'text-anchor':'end','font-size':'12',fill:'#374151'},t); }
-  add('text',{x:px(xmax/2),y:py(tmin)+40,'text-anchor':'middle','font-size':'13',fill:'#374151'},'zawartość wilgoci x [g/kg]');
-  add('text',{x:16,y:py(tmax/2),'text-anchor':'middle','font-size':'13',fill:'#374151',transform:'rotate(-90 16 '+py(tmax/2)+')'},'temperatura t [°C]');
+  for(var x=0;x<=xmax;x+=5){ add('line',{x1:px(x),y1:py(tmin),x2:px(x),y2:py(tmax),stroke:'var(--grid)'}); add('text',{x:px(x),y:py(tmin)+18,'text-anchor':'middle','font-size':'12',fill:'var(--ax)'},x); }
+  for(var t=0;t<=tmax;t+=5){ add('line',{x1:px(0),y1:py(t),x2:px(xmax),y2:py(t),stroke:'var(--grid)'}); add('text',{x:px(0)-8,y:py(t)+4,'text-anchor':'end','font-size':'12',fill:'var(--ax)'},t); }
+  add('text',{x:px(xmax/2),y:py(tmin)+40,'text-anchor':'middle','font-size':'13',fill:'var(--ax)'},'zawartość wilgoci x [g/kg]');
+  add('text',{x:16,y:py(tmax/2),'text-anchor':'middle','font-size':'13',fill:'var(--ax)',transform:'rotate(-90 16 '+py(tmax/2)+')'},'temperatura t [°C]');
   // izentalpy
   [10,20,30,40,50,60].forEach(function(i){
     var pts=[]; for(var x=0;x<=xmax;x+=0.5){ var t=tOfI(i,x); if(t>=tmin&&t<=tmax) pts.push(px(x)+','+py(t)); }
     if(pts.length<2) return;
-    add('polyline',{points:pts.join(' '),fill:'none',stroke:'#9ca3af','stroke-width':'1.2','stroke-dasharray':'4 3'});
+    add('polyline',{points:pts.join(' '),fill:'none',stroke:'var(--iso)','stroke-width':'1.2','stroke-dasharray':'4 3'});
     // etykieta na końcu linii
     var last=pts[pts.length-1].split(','); var first=pts[0].split(',');
     var lx=+last[0], ly=+last[1];
-    add('text',{x:lx+4,y:ly-4,'font-size':'11',fill:'#6b7280'},'i='+i);
+    add('text',{x:lx+4,y:ly-4,'font-size':'11',fill:'var(--iso-l)'},'i='+i);
   });
   // linia nasycenia
   var sp=[]; for(var t=tmin;t<=tmax;t+=0.5){ var x=xs(t); if(x<=xmax) sp.push(px(x)+','+py(t)); }
-  add('polyline',{points:sp.join(' '),fill:'none',stroke:'#0f766e','stroke-width':'2.5'});
-  add('text',{x:px(15)+6,y:py(20.5),'font-size':'12',fill:'#0f766e','font-weight':'700'},'φ = 100 %');
+  add('polyline',{points:sp.join(' '),fill:'none',stroke:'var(--accent)','stroke-width':'2.5'});
+  add('text',{x:px(15)+6,y:py(20.5),'font-size':'12',fill:'var(--accent)','font-weight':'700'},'φ = 100 %');
   // strzałki
   var defs=add('defs',{});
-  ['#1d4ed8','#dc2626'].forEach(function(c,i){
+  ['var(--info)','var(--hot)'].forEach(function(c,i){
     var m=document.createElementNS(NS,'marker'); m.setAttribute('id','ar'+i); m.setAttribute('markerUnits','userSpaceOnUse'); m.setAttribute('markerWidth','14'); m.setAttribute('markerHeight','14'); m.setAttribute('refX','8'); m.setAttribute('refY','5'); m.setAttribute('viewBox','0 0 10 10'); m.setAttribute('orient','auto');
-    var p=document.createElementNS(NS,'path'); p.setAttribute('d','M0,0 L10,5 L0,10 z'); p.setAttribute('fill',c); m.appendChild(p); defs.appendChild(m);
+    var p=document.createElementNS(NS,'path'); p.setAttribute('d','M0,0 L10,5 L0,10 z'); p.style.fill=c; m.appendChild(p); defs.appendChild(m);
   });
-  function pt(x,t,label,color,dx,dy){ add('circle',{cx:px(x),cy:py(t),r:6,fill:color,stroke:'#fff','stroke-width':'2'}); add('text',{x:px(x)+dx,y:py(t)+dy,'font-size':'13','font-weight':'700',fill:color},label+' ('+t+' °C; '+x+' g/kg)'); }
+  function pt(x,t,label,color,dx,dy){ add('circle',{cx:px(x),cy:py(t),r:6,fill:color,stroke:'var(--card)','stroke-width':'2'}); add('text',{x:px(x)+dx,y:py(t)+dy,'font-size':'13','font-weight':'700',fill:color},label+' ('+t+' °C; '+x+' g/kg)'); }
   // L1 -> L2
-  add('line',{x1:px(10),y1:py(24),x2:px(5.3),y2:py(17.4),stroke:'#1d4ed8','stroke-width':'3','marker-end':'url(#ar0)'});
+  add('line',{x1:px(10),y1:py(24),x2:px(5.3),y2:py(17.4),stroke:'var(--info)','stroke-width':'3','marker-end':'url(#ar0)'});
   // Z3 -> Z4
-  add('line',{x1:px(5),y1:py(17),x2:px(5),y2:py(25.6),stroke:'#dc2626','stroke-width':'3','marker-end':'url(#ar1)'});
-  pt(10,24,'L1','#1d4ed8',10,-8);
-  pt(5,17,'L2 = Z3','#1d4ed8',10,18);
-  pt(5,26,'Z4','#dc2626',-58,-10);
+  add('line',{x1:px(5),y1:py(17),x2:px(5),y2:py(25.6),stroke:'var(--hot)','stroke-width':'3','marker-end':'url(#ar1)'});
+  pt(10,24,'L1','var(--info)',10,-8);
+  pt(5,17,'L2 = Z3','var(--info)',10,18);
+  pt(5,26,'Z4','var(--hot)',-58,-10);
 })();
+
+// druk/PDF: wszystkie rozwiązania rozwinięte
+window.addEventListener('beforeprint',function(){document.querySelectorAll('details').forEach(function(d){d.open=true;});});
 </script>
 </body>
 </html>
