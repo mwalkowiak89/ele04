@@ -196,6 +196,7 @@ ol.kroki li b{color:var(--ink)}
 .note.bad{border-color:var(--bad);background:var(--bad-bg)}
 .note b:first-child{display:block;margin-bottom:2px}
 mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+mjx-container mjx-assistive-mml{width:1px!important;height:1px!important}
 /* ===== SH-2606 CSS START ===== */
 #sh-2606 .formula{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;background:var(--sf2);border-left:3px solid var(--cold);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;overflow-x:auto;font-size:1rem;font-variant-numeric:tabular-nums;white-space:nowrap}
 #sh-2606 .formula .fr{margin:0 .3em}
@@ -3760,13 +3761,15 @@ const GLOSS = {
    ============================================================ */
 (function(){
   const secs = { pisemna: document.getElementById('sec-pisemna'), praktyczna: document.getElementById('sec-praktyczna') };
+  // MathJax przy starcie składa cały dokument; ponowne składanie gotowych wzorów dubluje ukryty MathML dla czytników ekranu
+  window.ELE04_typeset = function(el){ if (window.MathJax && MathJax.typesetPromise && !el.querySelector('mjx-container')) MathJax.typesetPromise([el]).catch(()=>{}); };
   const navs = { pisemna: document.getElementById('qnav'), praktyczna: document.getElementById('secnav') };
   function setMode(m, push){
     Object.keys(secs).forEach(k=>{ secs[k].hidden = (k!==m); navs[k].hidden = (k!==m); });
     document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active', b.dataset.mode===m));
     try{ localStorage.setItem('ele04.mode', m); }catch(e){}
     if (push !== false && location.hash && !document.querySelector(location.hash)) history.replaceState(null,'',' ');
-    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([secs[m]]).catch(()=>{});
+    window.ELE04_typeset(secs[m]);
   }
   document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click', ()=>{ setMode(b.dataset.mode); window.scrollTo({top:0,behavior:'smooth'}); }));
   let start = 'pisemna';
@@ -3794,7 +3797,7 @@ const GLOSS = {
     btns.forEach(b=>b.classList.toggle('active', b.dataset.sheet===sh.id));
     buildNav(sh);
     try{ localStorage.setItem('ele04.sheet', sh.id); }catch(e){}
-    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([sh]).catch(()=>{});
+    window.ELE04_typeset(sh);
     if (scroll){ const first = sh.querySelector('section'); if(first) setTimeout(()=>first.scrollIntoView({behavior:'smooth',block:'start'}), 30); }
   }
   btns.forEach(b=>b.addEventListener('click', ()=>setSheet(b.dataset.sheet, true)));
