@@ -12,11 +12,11 @@
 <style>
 :root{--bg:#f3f5f7;--sf:#ffffff;--sf2:#e9eef2;--ink:#1a2430;--ink2:#4a5866;--mut:#7a8794;--line:#d6dde4;
 --cold:#1f6f9f;--cold-bg:#e3eef6;--hot:#c2502b;--hot-bg:#f8e7df;--ok:#2b7a5a;--ok-bg:#e0f0e8;--warn:#a8641b;--warn-bg:#f7ecd9;
---term:#1f6f9f;--pop-bg:#1a2430;--pop-ink:#f3f5f7;--shadow:0 6px 24px rgba(20,30,40,.14);}
+--term:#1f6f9f;--pop-bg:#1a2430;--pop-ink:#f3f5f7;--on-cold:#ffffff;--shadow:0 6px 24px rgba(20,30,40,.14);}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111820;--sf:#1a232d;--sf2:#222d38;--ink:#e6ecf2;--ink2:#b3bfcb;--mut:#7f8c99;--line:#2e3a46;
---cold:#6fb3dd;--cold-bg:#1a2e3d;--hot:#f08a63;--hot-bg:#3a241b;--ok:#6cc79c;--ok-bg:#1c332a;--warn:#e0a955;--warn-bg:#3a2d18;--term:#7cc0e8;--pop-bg:#f3f5f7;--pop-ink:#1a2430;--shadow:0 6px 24px rgba(0,0,0,.5);}}
+--cold:#6fb3dd;--cold-bg:#1a2e3d;--hot:#f08a63;--hot-bg:#3a241b;--ok:#6cc79c;--ok-bg:#1c332a;--warn:#e0a955;--warn-bg:#3a2d18;--term:#7cc0e8;--pop-bg:#f3f5f7;--pop-ink:#1a2430;--on-cold:#0f1a24;--shadow:0 6px 24px rgba(0,0,0,.5);}}
 :root[data-theme="dark"]{--bg:#111820;--sf:#1a232d;--sf2:#222d38;--ink:#e6ecf2;--ink2:#b3bfcb;--mut:#7f8c99;--line:#2e3a46;
---cold:#6fb3dd;--cold-bg:#1a2e3d;--hot:#f08a63;--hot-bg:#3a241b;--ok:#6cc79c;--ok-bg:#1c332a;--warn:#e0a955;--warn-bg:#3a2d18;--term:#7cc0e8;--pop-bg:#f3f5f7;--pop-ink:#1a2430;--shadow:0 6px 24px rgba(0,0,0,.5);}
+--cold:#6fb3dd;--cold-bg:#1a2e3d;--hot:#f08a63;--hot-bg:#3a241b;--ok:#6cc79c;--ok-bg:#1c332a;--warn:#e0a955;--warn-bg:#3a2d18;--term:#7cc0e8;--pop-bg:#f3f5f7;--pop-ink:#1a2430;--on-cold:#0f1a24;--shadow:0 6px 24px rgba(0,0,0,.5);}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
@@ -39,10 +39,10 @@ sub,sup{font-size:.72em;line-height:0}
 .nav{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin:0 -16px 24px;padding:10px 16px}
 .nav .in{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .nav a,.nav button{font:inherit;font-size:.92rem;min-height:40px;padding:6px 13px;border-radius:999px;border:1px solid var(--line);background:var(--sf);color:var(--ink);text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.nav a b{font-family:"IBM Plex Mono",monospace;background:var(--cold);color:#fff;border-radius:999px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600}
+.nav a b{font-family:"IBM Plex Mono",monospace;background:var(--cold);color:var(--on-cold);border-radius:999px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600}
 .nav a:hover,.nav button:hover{border-color:var(--cold)}
 .nav .sp{flex:1}
-.nav button.on{background:var(--cold);color:#fff;border-color:var(--cold)}
+.nav button.on{background:var(--cold);color:var(--on-cold);border-color:var(--cold)}
 .nav a:focus-visible,.nav button:focus-visible,.t:focus-visible,summary:focus-visible{outline:2px solid var(--cold);outline-offset:2px}
 .task{background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin-bottom:26px;scroll-margin-top:120px}
 .task>header{display:flex;gap:14px;align-items:flex-start;margin-bottom:10px}
@@ -57,7 +57,7 @@ details[open]>summary::before{transform:rotate(45deg)}
 details>.body{padding:4px 16px 16px}
 .steps{counter-reset:s;padding-left:0;margin:0;list-style:none}
 .steps li{counter-increment:s;position:relative;padding-left:40px;margin-bottom:12px}
-.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:28px;height:28px;border-radius:50%;background:var(--cold);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center}
+.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:28px;height:28px;border-radius:50%;background:var(--cold);color:var(--on-cold);font-family:"IBM Plex Mono",monospace;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center}
 .formula{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;background:var(--sf2);border-left:3px solid var(--cold);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;overflow-x:auto;font-size:1rem;font-variant-numeric:tabular-nums;white-space:nowrap}
 .note{border-left:3px solid var(--warn);background:var(--warn-bg);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.95rem}
 .note.ok{border-color:var(--ok);background:var(--ok-bg)}
@@ -129,7 +129,7 @@ svg.chart,svg.schem{width:100%;height:auto;display:block;background:var(--sf);bo
 .legend i.h{border-top-style:dashed;border-color:var(--hot)}
 .pts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:14px}
 .pts .p{background:var(--sf2);border-radius:10px;padding:12px 14px;display:flex;gap:12px}
-.pts .p b{flex:0 0 34px;height:34px;border-radius:50%;background:var(--cold);color:#fff;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace}
+.pts .p b{flex:0 0 34px;height:34px;border-radius:50%;background:var(--cold);color:var(--on-cold);display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace}
 .pts .p div{font-size:.93rem}
 .pts .p div span{display:block;color:var(--ink2);font-size:.88rem}
 .gloss{columns:2;column-gap:28px;padding-left:18px;font-size:.93rem}
@@ -147,11 +147,16 @@ td.frm .fr{margin:0 .15em}
 .key{display:inline-block;margin-left:6px;font-size:.74rem;font-weight:600;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:1px 7px;white-space:nowrap;font-family:"IBM Plex Sans",system-ui,sans-serif}
 .key.off{color:var(--mut);background:var(--sf2);font-weight:500}
 a{color:var(--cold)}
+/* SVG na małych ekranach: przewijanie zamiast pomniejszania tekstu */
+.figscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0}
+.figscroll svg.chart{min-width:640px}
+.figscroll svg.schem{min-width:520px}
+@media print{.figscroll{overflow:visible}.figscroll svg.chart,.figscroll svg.schem{min-width:0}}
 @media print{@page{size:A4;margin:12mm}.nav,#pop{display:none!important}body{background:#fff;font-size:13px;padding:0}.task{break-inside:auto;scroll-margin-top:0}table,.formula,.note,.cmp .c,.pts .p,svg.chart,svg.schem,.proto li{break-inside:avoid}h2,h3,.table-cap,summary{break-after:avoid}details>summary::before{display:none}.tw{overflow:visible}table{min-width:0}.formula{white-space:normal}.t::after{display:none}.t{border-bottom:none}.gloss{columns:2}}
 </style>
 </head>
 <body>
-<div id="pop" role="dialog" aria-live="polite"></div>
+<div id="pop" role="dialog" aria-labelledby="pop-t" aria-live="polite"></div>
 <div class="wrap">
 <header class="hd">
  <div class="eyebrow">Egzamin zawodowy · część praktyczna · ELE.04-01-26.06-SG · czerwiec 2026</div>
@@ -214,7 +219,7 @@ a{color:var(--cold)}
 <section class="task" id="z1">
  <header><span class="no">Rezultat 1</span><div><h2>Punkty charakterystyczne na schemacie ideowym (Rysunek 2)</h2><span class="tag">gdzie w instalacji jest który punkt obiegu</span></div></header>
  <p>Numer punktu wpisujemy przy każdej linii odniesienia zgodnie z kierunkiem przepływu czynnika: <span class="t" data-k="parownik" tabindex="0">parownik PAR</span> → <span class="t" data-k="sprezarka" tabindex="0">sprężarka SPR</span> → <span class="t" data-k="skraplacz" tabindex="0">skraplacz SKR</span> → <span class="t" data-k="tzr" tabindex="0">TZR</span> → parownik.</p>
- <svg class="schem" viewBox="0 0 640 400" role="img" aria-label="Schemat ideowy pompy ciepła z numeracją punktów 1–6">
+ <div class="figscroll"><svg class="schem" viewBox="0 0 640 400" role="img" aria-label="Schemat ideowy pompy ciepła z numeracją punktów 1–6">
 <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="arrow"/></marker></defs>
 <path class="pipe" d="M470 70 L400 70" marker-end="url(#ar)"/>
 <path class="pipe" d="M240 70 L120 70" marker-end="url(#ar)"/>
@@ -241,7 +246,7 @@ a{color:var(--cold)}
 <g class="node"><circle cx="120" cy="320" r="6"/><text x="96" y="345">6</text></g>
 <g class="node"><circle cx="385" cy="320" r="6"/><text x="372" y="345">1</text></g>
 <g class="node"><circle cx="470" cy="320" r="6"/><text x="490" y="345">2</text></g>
-</svg>
+</svg></div>
  <div class="pts">
   <div class="p"><b>1</b><div>wewnątrz parownika, koniec parowania<span><span class="t" data-k="paranas" tabindex="0">para nasycona sucha</span>, t<sub>0</sub> = 2 °C, p<sub>0</sub></span></div></div>
   <div class="p"><b>2</b><div>wylot z parownika / ssanie sprężarki (za czujnikiem TZR)<span><span class="t" data-k="paraprzeg" tabindex="0">para przegrzana</span>, t<sub>ss</sub> = 10 °C</span></div></div>
@@ -265,7 +270,7 @@ a{color:var(--cold)}
 <section class="task" id="z2">
  <header><span class="no">Rezultat 2</span><div><h2>Nowy obieg 1'–6' na wykresie log p–i (Rysunek 1)</h2><span class="tag">rysowanie przemian dla −20 °C</span></div></header>
  <p>Na <span class="t" data-k="logpi" tabindex="0">wykresie log p–i</span> obieg nominalny (w arkuszu narysowany na różowo) to czworobok 1-2-3-4-5-6. Przy −20 °C zmienia się tylko dolna <span class="t" data-k="izobara" tabindex="0">izobara</span> – górna (skraplanie przy 60 °C) zostaje. Poniżej odtworzony wykres z oboma obiegami; kształt krzywej granicznej R410A i linie pomocnicze odpowiadają danym tablicowym czynnika.</p>
- <svg class="chart" viewBox="0 0 760 470" role="img" aria-label="Wykres log p–i dla R410A z obiegiem nominalnym i obiegiem przy −20 °C">
+ <div class="figscroll"><svg class="chart" viewBox="0 0 760 470" role="img" aria-label="Wykres log p–i dla R410A z obiegiem nominalnym i obiegiem przy −20 °C">
 <line class="grid" x1="58.0" y1="18" x2="58.0" y2="424"/>
 <text class="ax" x="58.0" y="440" text-anchor="middle">240</text>
 <line class="grid" x1="149.2" y1="18" x2="149.2" y2="424"/>
@@ -351,7 +356,7 @@ a{color:var(--cold)}
 <rect class="legbg" x="62" y="370" width="215" height="44" rx="4"/>
 <line class="cyc nom" x1="68" y1="382" x2="96" y2="382"/><text class="lbl" x="102" y="386">obieg nominalny, t<tspan class="sub">z</tspan> = +7 °C</text>
 <line class="cyc cold" x1="68" y1="400" x2="96" y2="400"/><text class="lbl" x="102" y="404">obieg przy t<tspan class="sub">z</tspan> = −20 °C</text>
-</svg>
+</svg></div>
  <div class="legend"><span><i></i>obieg nominalny, +7 °C (punkty 1–6)</span><span><i class="h"></i>obieg przy −20 °C (punkty 1'–6')</span><span>— — izotermy 90 °C i 110 °C</span><span style="color:var(--hot)">· · · izochory 0,030 i 0,090 m³/kg</span></div>
  <details><summary>Jak narysować obieg 1'–6' – krok po kroku</summary><div class="body">
  <ol class="steps">
@@ -536,9 +541,10 @@ let cur=null,hoverT=null,pinned=false;
 const fine=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 function openPop(el){
   const g=GL[el.dataset.k];if(!g)return;
-  if(cur)cur.classList.remove('open');
+  if(cur){cur.classList.remove('open');cur.setAttribute('aria-expanded','false');}
   cur=el;el.classList.add('open');
-  pop.innerHTML='<button class="x" type="button" aria-label="Zamknij">×</button><b>'+g.n+'</b>'+g.d;
+  pop.innerHTML='<button class="x" type="button" aria-label="Zamknij">×</button><b id="pop-t">'+g.n+'</b>'+g.d;
+  el.setAttribute('aria-expanded','true');
   pop.classList.add('show');
   const r=el.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight,vw=document.documentElement.clientWidth;
   let x=r.left+window.scrollX+r.width/2-pw/2;
@@ -548,14 +554,15 @@ function openPop(el){
   pop.style.left=x+'px';pop.style.top=y+'px';
   pop.querySelector('.x').addEventListener('click',e=>{e.stopPropagation();closePop();});
 }
-function closePop(){pop.classList.remove('show');if(cur)cur.classList.remove('open');cur=null;pinned=false;}
+function closePop(restoreFocus){pop.classList.remove('show');if(cur){cur.classList.remove('open');cur.setAttribute('aria-expanded','false');if(restoreFocus)cur.focus();}cur=null;pinned=false;}
 document.querySelectorAll('.t').forEach(el=>{
+  el.setAttribute('role','button');el.setAttribute('aria-expanded','false');el.setAttribute('aria-controls','pop');
   el.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();
     if(cur===el&&pinned){closePop();return;}
     openPop(el);pinned=true;});
   el.addEventListener('keydown',e=>{
     if(e.key==='Enter'||e.key===' '){e.preventDefault();if(cur===el&&pinned){closePop();}else{openPop(el);pinned=true;}}
-    if(e.key==='Escape')closePop();
+    if(e.key==='Escape')closePop(true);
   });
   if(fine){
     el.addEventListener('mouseenter',()=>{clearTimeout(hoverT);if(!pinned)openPop(el);});
@@ -567,7 +574,7 @@ if(fine){
   pop.addEventListener('mouseenter',()=>clearTimeout(hoverT));
 }
 document.addEventListener('click',e=>{if(!pop.contains(e.target))closePop();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closePop();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePop(pop.contains(document.activeElement));});
 window.addEventListener('resize',()=>{if(cur)openPop(cur);});
 
 // Rozwiń / zwiń wszystkie rozwiązania
@@ -600,7 +607,9 @@ document.querySelectorAll('.nav a[href^="#"]').forEach(a=>{
 });
 
 // druk/PDF: wszystkie rozwiązania rozwinięte
-window.addEventListener('beforeprint',function(){document.querySelectorAll('details').forEach(function(d){d.open=true;});});
+var printState=null;
+window.addEventListener('beforeprint',function(){printState=[].map.call(document.querySelectorAll('details'),function(d){return d.open;});document.querySelectorAll('details').forEach(function(d){d.open=true;});});
+window.addEventListener('afterprint',function(){if(printState){document.querySelectorAll('details').forEach(function(d,i){d.open=printState[i];});printState=null;}});
 </script>
 </body>
 </html>

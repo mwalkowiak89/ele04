@@ -129,6 +129,9 @@
   ul.tight li{margin:3px 0}
   .hidden{display:none!important}
   footer{color:var(--muted);font-size:.88rem;text-align:center;margin-top:30px}
+  .figscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .figscroll svg.chart{min-width:560px}
+  @media print{.figscroll{overflow:visible}.figscroll svg.chart{min-width:0}}
   @media print{@page{size:A4;margin:12mm}nav.topnav,.tools,#tip{display:none!important}body{background:#fff;font-size:13px}.wrap{padding:0;max-width:none}section.card{box-shadow:none;border:1px solid #ccc;margin:10px 0;padding:14px 16px}header.hero{break-after:avoid}.step,.box,.tablewrap,.flow,.formula,.gitem,.sitem{break-inside:avoid}.card h2{break-after:avoid;display:block;line-height:1.5}.card h2 .num{display:inline-flex;width:30px;height:30px;vertical-align:middle;margin-right:6px}details.sol>summary::before{display:none}.term{color:inherit;border-bottom:none;font-weight:600}.term::after{display:none}.chart{max-height:150mm}.formula{white-space:normal;overflow:visible;line-height:1.9}}
 </style>
 </head>
@@ -419,7 +422,7 @@
       <div class="step"><b class="t">Krok 5 – odczyt entalpii</b> Przez każdy punkt poprowadź linię równoległą do ukośnych <span class="term" data-def="Linia stałej entalpii właściwej na wykresie Molliera – ukośna, opadająca w prawo. Wartość odczytuje się na skali ukośnej wzdłuż krzywej nasycenia.">izentalp</span> i odczytaj wartość na skali „Entalpia właściwa i [kJ/kg]”.</div>
 
       <p><b>Schemat poglądowy (uproszczony wykres i–x, ten sam układ osi co w arkuszu):</b></p>
-      <svg id="mollier" class="chart" viewBox="0 0 640 460" role="img" aria-label="Uproszczony wykres Molliera z punktami L1, L2, Z3, Z4"></svg>
+      <div class="figscroll"><svg id="mollier" class="chart" viewBox="0 0 640 460" role="img" aria-label="Uproszczony wykres Molliera z punktami L1, L2, Z3, Z4"></svg></div>
       <div class="legend">
         <span style="--c:var(--accent)">linia nasycenia φ = 100 %</span>
         <span style="--c:var(--iso)">izentalpy i = const</span>
@@ -595,7 +598,7 @@
 <footer>Rozwiązanie opracowane na podstawie arkusza ELE.04-01-26.01-SG (CKE, styczeń 2026). Wartości entalpii odczytane z wykresu Molliera mogą różnić się o ±1 kJ/kg – tyle dopuszczają <a href="https://arkusze.pl/zawodowy/ele04-2026-styczen-egzamin-zawodowy-praktyczny-zasady-oceniania.pdf">zasady oceniania CKE</a>, z których pochodzą też zakresy oznaczone „klucz CKE”.</footer>
 </div>
 
-<div id="tip" role="tooltip"><div class="arr"></div><b id="tipTitle"></b><span id="tipText"></span></div>
+<div id="tip" role="tooltip" aria-labelledby="tipTitle"><div class="arr"></div><b id="tipTitle"></b><span id="tipText"></span></div>
 
 <script>
 (function(){
@@ -619,22 +622,22 @@
     tip.style.left=left+'px'; tip.style.top=top+'px';
     var ax=r.left+sx+r.width/2-left-6; arr.style.left=Math.max(10,Math.min(tw-22,ax))+'px';
   }
-  function hide(){ tip.style.display='none'; if(pinned){pinned.classList.remove('open');pinned=null;} }
+  function hide(restoreFocus){ tip.style.display='none'; if(pinned){pinned.classList.remove('open');pinned.setAttribute('aria-expanded','false');if(restoreFocus)pinned.focus();pinned=null;} }
 
   var terms=document.querySelectorAll('.term');
   terms.forEach(function(el){
-    el.setAttribute('tabindex','0'); el.setAttribute('role','button');
+    el.setAttribute('tabindex','0'); el.setAttribute('role','button'); el.setAttribute('aria-expanded','false'); el.setAttribute('aria-describedby','tip');
     el.addEventListener('click',function(e){
       e.stopPropagation();
       if(pinned===el){ hide(); return; }
-      if(pinned) pinned.classList.remove('open');
-      pinned=el; el.classList.add('open'); show(el);
+      if(pinned){ pinned.classList.remove('open'); pinned.setAttribute('aria-expanded','false'); }
+      pinned=el; el.classList.add('open'); el.setAttribute('aria-expanded','true'); show(el);
     });
     if(canHover){
       el.addEventListener('mouseenter',function(){ if(!pinned) show(el); });
       el.addEventListener('mouseleave',function(){ if(!pinned) tip.style.display='none'; });
     }
-    el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();} if(e.key==='Escape') hide(); });
+    el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();} if(e.key==='Escape') hide(true); });
   });
   document.addEventListener('click',function(e){ if(!tip.contains(e.target)) hide(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') hide(); });
@@ -661,6 +664,7 @@
     calcOnly=!calcOnly; calcBtn.classList.toggle('active',calcOnly); calcBtn.setAttribute('aria-pressed',calcOnly);
     calcBtn.textContent = calcOnly ? 'Pokaż wszystko (z teorią)' : 'Pokaż tylko zadania obliczeniowe';
     document.querySelectorAll('.theory').forEach(function(el){ el.classList.toggle('hidden',calcOnly); });
+    document.querySelectorAll('nav.topnav a[href^="#"]').forEach(function(a){ var t=document.querySelector(a.getAttribute('href')); a.classList.toggle('hidden', !!(t && t.classList.contains('theory') && calcOnly)); });
   };
 
   /* ---------- UPROSZCZONY WYKRES MOLLIERA (SVG) ---------- */
@@ -681,7 +685,7 @@
     if(pts.length<2) return;
     add('polyline',{points:pts.join(' '),fill:'none',stroke:'var(--iso)','stroke-width':'1.2','stroke-dasharray':'4 3'});
     // etykieta na końcu linii
-    var last=pts[pts.length-1].split(','); var first=pts[0].split(',');
+    var last=pts[pts.length-1].split(',');
     var lx=+last[0], ly=+last[1];
     add('text',{x:lx+4,y:ly-4,'font-size':'11',fill:'var(--iso-l)'},'i='+i);
   });
@@ -706,7 +710,9 @@
 })();
 
 // druk/PDF: wszystkie rozwiązania rozwinięte
-window.addEventListener('beforeprint',function(){document.querySelectorAll('details').forEach(function(d){d.open=true;});});
+var printState=null;
+window.addEventListener('beforeprint',function(){printState=[].map.call(document.querySelectorAll('details'),function(d){return d.open;});document.querySelectorAll('details').forEach(function(d){d.open=true;});});
+window.addEventListener('afterprint',function(){if(printState){document.querySelectorAll('details').forEach(function(d,i){d.open=printState[i];});printState=null;}});
 </script>
 </body>
 </html>
