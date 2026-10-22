@@ -564,8 +564,9 @@ a.tbtn{display:inline-flex;align-items:center;text-decoration:none}
 
 <!-- ================================================================
      CZĘŚĆ PISEMNA – BAZA TESTOWA
-     Struktura pytania: <article class="card q" id="qN" data-ans="X"> ...
-     Klucz: atrybut data-ans. Uzasadnienie w <div class="sol">.
+     Pytania są w pisemna/<arkusz>.js (window.ELE04_BANK[id] = {id, kwalifikacja, kod, sesja, pytania:[…]}),
+     rysunki w pisemna/img/<arkusz>/zNN.png. Listę arkuszy (kafelki, Mix) ustawia tablica ARKUSZE w skrypcie
+     „TEST ABCD”; pytanie: {n, tytul, dzial, tresc, img, img_alt, odp:{A–D}, klucz, rozw:{lead, kroki, bledne, pulapka}}.
      ================================================================ -->
 <!-- ================= EKRAN STARTOWY: wybór części ================= -->
 <section class="start" id="start" aria-labelledby="start-h">
